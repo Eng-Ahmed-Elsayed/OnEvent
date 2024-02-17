@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-OnEvent-b61a54e6-6345-40d9-bcf1-c39df0d3fb3e</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\EventManagement\Controllers\" />
+    <Folder Include="Areas\EventManagement\Views\" />
+    <Folder Include="Areas\GuestManagement\Controllers\" />
+    <Folder Include="Areas\GuestManagement\Views\" />
+    <Folder Include="Areas\IntegrationAndExternalServices\Controllers\" />
+    <Folder Include="Areas\IntegrationAndExternalServices\Views\" />
+    <Folder Include="Areas\InvitationManagement\Controllers\" />
+    <Folder Include="Areas\InvitationManagement\Views\" />
+    <Folder Include="Areas\NotificationAndCommunication\Controllers\" />
+    <Folder Include="Areas\NotificationAndCommunication\Views\" />
+    <Folder Include="Areas\ReportingAndAnalytics\Controllers\" />
+    <Folder Include="Areas\ReportingAndAnalytics\Views\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+  </ItemGroup>
+
+</Project>
