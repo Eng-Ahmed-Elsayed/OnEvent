@@ -7,16 +7,17 @@ namespace DataAccess.Data
 {
     public class ApplicationDbContext : IdentityDbContext<User>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
         public DbSet<Event> Events { get; set; }
         public DbSet<Guest> Guests { get; set; }
         public DbSet<Invitation> Invitations { get; set; }
         public DbSet<Logistics> Logistics { get; set; }
         public DbSet<Notification> Notification { get; set; }
         public DbSet<RSVP> RSVPs { get; set; }
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
+        {
+        }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
