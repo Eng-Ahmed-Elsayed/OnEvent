@@ -21,7 +21,7 @@ namespace DataAccess.UnitOfWork.Interfaces
 
         Task UpdateAsync(TEntity entity);
 
-        Task DeleteAsync(object id);
+        Task<bool> DeleteAsync(object id);
 
     }
 }
