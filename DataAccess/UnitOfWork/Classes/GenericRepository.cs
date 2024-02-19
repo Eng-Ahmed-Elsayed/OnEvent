@@ -27,9 +27,8 @@ namespace DataAccess.UnitOfWork.Classes
         /// <param name="parameters"></param>
         /// <param name="includeProperties"></param>
         /// <returns></returns>
-        public async Task<PagedList<TEntity>> GetAsync(
+        public async Task<PagedList<TEntity>> GetListAsync(
             Expression<Func<TEntity, bool>> filter = null,
-            //Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             Parameters parameters = null,
             string includeProperties = "")
         {
@@ -47,17 +46,32 @@ namespace DataAccess.UnitOfWork.Classes
                 query = query.Include(includeProperty);
             }
 
-            //if (orderBy != null)
-            //{
-            //    query = orderBy(query);
-            //}
-
             if (!parameters.OrderBy.IsNullOrEmpty())
             {
                 query = _sortHelper.ApplySort(query, parameters.OrderBy);
             }
 
             return await PagedList<TEntity>.ToPagedList(query, parameters.PageNumber, parameters.PageSize);
+        }
+
+        public async Task<TEntity> GetAsync(
+            Expression<Func<TEntity, bool>> filter = null,
+            string includeProperties = "")
+        {
+            IQueryable<TEntity> query = dbSet;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            foreach (var includeProperty in includeProperties.Split
+                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+            return await query.FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -97,31 +111,83 @@ namespace DataAccess.UnitOfWork.Classes
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task DeleteAsync(object id)
+        public async Task<bool> DeleteAsync(object id)
         {
             TEntity entityToDelete = await dbSet.FindAsync(id);
-            await DeleteAsync(entityToDelete);
+            if (entityToDelete != null)
+            {
+                AttachEntity(entityToDelete);
+                if (typeof(TEntity).GetProperty("IsDeleted") != null)
+                {
+                    await VirtualDeleteAsync(entityToDelete);
+                }
+                else { await PhysicalDeleteAsync(entityToDelete); }
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
-        /// Delete a single record by entity.
+        /// Physical delete a single record by entity.
         /// </summary>
         /// <param name="entityToDelete"></param>
         /// <returns></returns>
-        public Task DeleteAsync(TEntity entityToDelete)
+        private Task PhysicalDeleteAsync(TEntity entityToDelete)
         {
-            if (entityToDelete != null)
-            {
-                if (_context.Entry(entityToDelete).State == EntityState.Detached)
-                {
-                    dbSet.Attach(entityToDelete);
-                }
-                dbSet.Remove(entityToDelete);
-                return Task.CompletedTask;
-            }
-            return Task.FromCanceled(new CancellationToken());
+            dbSet.Remove(entityToDelete);
+            return Task.CompletedTask;
         }
 
+
+
+        /// <summary>
+        /// Virtual delete a single record by entity.
+        /// </summary>
+        /// <param name="entityToDelete"></param>
+        /// <returns></returns>
+        private Task VirtualDeleteAsync(TEntity entityToDelete)
+        {
+            var result = IsVirtualDeletableMarkIt(entityToDelete);
+            return result ? Task.CompletedTask : Task.FromCanceled(new CancellationToken());
+
+        }
+
+        /// <summary>
+        /// Return true: if entity has a IsDeleted attribute mark it as true.
+        /// Else return false
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        private bool IsVirtualDeletableMarkIt(TEntity entity)
+        {
+            try
+            {
+                var isDeletedProperty = typeof(TEntity).GetProperty("IsDeleted");
+                if (isDeletedProperty != null && isDeletedProperty.PropertyType == typeof(bool))
+                {
+                    isDeletedProperty.SetValue(entity, true);
+                    return true;
+                }
+                return false;
+            }
+            catch { return false; }
+        }
+
+        /// <summary>
+        /// The entry provides access to change tracking information 
+        /// and operations for the entity.
+        /// </summary>
+        /// <param name="entity"></param>
+        private void AttachEntity(TEntity entity)
+        {
+            if (entity != null)
+            {
+                if (_context.Entry(entity).State == EntityState.Detached)
+                {
+                    dbSet.Attach(entity);
+                }
+            }
+        }
 
     }
 }
