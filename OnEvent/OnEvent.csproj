@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\EventManagement\Controllers\" />
     <Folder Include="Areas\EventManagement\Views\" />
     <Folder Include="Areas\GuestManagement\Controllers\" />
     <Folder Include="Areas\GuestManagement\Views\" />
@@ -38,6 +37,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+    <ProjectReference Include="..\Models\Models.csproj" />
   </ItemGroup>
 
 </Project>
