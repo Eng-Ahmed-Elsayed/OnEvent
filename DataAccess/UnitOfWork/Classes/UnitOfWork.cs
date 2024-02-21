@@ -21,6 +21,12 @@ namespace DataAccess.UnitOfWork.Classes
             _context = Context;
         }
 
+        /// <summary>
+        /// Lazy instantiation for ISortHelper.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         private ISortHelper<T> GetSortHelper<T>()
         {
             // Implement logic to return appropriate ISortHelper instance based on the type T
