@@ -9,24 +9,27 @@ namespace DataAccess.Configurations
     {
         public void Configure(EntityTypeBuilder<IdentityRole> builder)
         {
+
+
             builder.HasData(
-                new IdentityRole
-                {
-                    Name = RoleNames.User,
-                    NormalizedName = "USER",
-                },
-                new IdentityRole
-                {
-                    Name = RoleNames.Admin,
-                    NormalizedName = "ADMINI"
-                }
-                ,
-                new IdentityRole
-                {
-                    Name = RoleNames.Moderator,
-                    NormalizedName = "MODERATOR"
-                }
-                );
+            new IdentityRole
+            {
+                Id = "124878f6-6c0e-4760-877d-5b74d1f9f022",
+                Name = RoleNames.User,
+                NormalizedName = "USER",
+            },
+            new IdentityRole
+            {
+                Id = "289878f6-6c0e-4760-877d-5b74d1f9f022",
+                Name = RoleNames.Moderator,
+                NormalizedName = "MODERATOR"
+            },
+            new IdentityRole
+            {
+                Id = "318278f6-6c0e-4760-877d-5b74d1f9f022",
+                Name = RoleNames.Admin,
+                NormalizedName = "ADMINI"
+            });
         }
     }
 }

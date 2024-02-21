@@ -32,6 +32,7 @@ namespace DataAccess.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProfileImgPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -167,6 +168,7 @@ namespace DataAccess.Migrations
                     Description = table.Column<string>(type: "nvarchar(800)", maxLength: 800, nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Location = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: false),
+                    ImgPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OrganizerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -185,7 +187,7 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EmailModel",
+                name: "EmailCraft",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -198,15 +200,15 @@ namespace DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmailModel", x => x.Id);
+                    table.PrimaryKey("PK_EmailCraft", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EmailModel_AspNetUsers_UserId",
+                        name: "FK_EmailCraft_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_EmailModel_Events_EventId",
+                        name: "FK_EmailCraft_Events_EventId",
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "Id",
@@ -220,7 +222,7 @@ namespace DataAccess.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MealPreference = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    MealPreference = table.Column<int>(type: "int", nullable: false),
                     EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -344,9 +346,9 @@ namespace DataAccess.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "67cddc8e-290d-48d8-83f9-a74c85c5d427", null, "Moderator", "MODERATOR" },
-                    { "75b57b73-9d81-4f64-812b-2cfe5a471958", null, "Admin", "ADMINI" },
-                    { "c4a2b8e8-d967-4c73-ab9e-c16c7c6ceb42", null, "User", "USER" }
+                    { "124878f6-6c0e-4760-877d-5b74d1f9f022", null, "User", "USER" },
+                    { "289878f6-6c0e-4760-877d-5b74d1f9f022", null, "Moderator", "MODERATOR" },
+                    { "318278f6-6c0e-4760-877d-5b74d1f9f022", null, "Admin", "ADMINI" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -389,13 +391,13 @@ namespace DataAccess.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmailModel_EventId",
-                table: "EmailModel",
+                name: "IX_EmailCraft_EventId",
+                table: "EmailCraft",
                 column: "EventId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmailModel_UserId",
-                table: "EmailModel",
+                name: "IX_EmailCraft_UserId",
+                table: "EmailCraft",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -459,7 +461,7 @@ namespace DataAccess.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "EmailModel");
+                name: "EmailCraft");
 
             migrationBuilder.DropTable(
                 name: "Invitations");

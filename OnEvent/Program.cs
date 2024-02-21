@@ -2,8 +2,9 @@ using System.Text.Json.Serialization;
 using DataAccess.Data;
 using DataAccess.UnitOfWork.Classes;
 using DataAccess.UnitOfWork.Interfaces;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Models.Models;
+using OnEvent.MappingProfiles;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,11 +14,14 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddScoped(typeof(ISortHelper<>), typeof(SortHelper<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddAutoMapper(typeof(EventManagementProfile));
 
 builder.Services.AddControllersWithViews().AddJsonOptions(options =>
 {
@@ -26,6 +30,7 @@ builder.Services.AddControllersWithViews().AddJsonOptions(options =>
     options.JsonSerializerOptions.WriteIndented = true;
 
 }); ;
+
 
 
 var app = builder.Build();
@@ -47,11 +52,18 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapAreaControllerRoute(
+    name: "MyAreaEventManagement",
+    areaName: "EventManagement",
+    pattern: "EventManagement/{controller=Events}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.MapRazorPages();
 
 app.Run();

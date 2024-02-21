@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Models.Models;
 
-namespace Models.Models
+namespace Models.DataTransferObjects
 {
-    public class Event
+    public class EventDto
     {
         public Guid Id { get; set; }
         [Required]
@@ -19,16 +20,14 @@ namespace Models.Models
         public string Location { get; set; }
         public string? ImgPath { get; set; }
 
-        public string OrganizerId { get; set; }
+
+        public string? OrganizerId { get; set; }
         public User? Organizer { get; set; }
         public ICollection<Invitation>? Invitations { get; set; }
-        public ICollection<Guest>? Guests { get; set; }
+        public ICollection<GuestDto>? Guests { get; set; }
         public ICollection<Logistics>? Logistics { get; set; }
 
-        [Required]
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
         public DateTime? UpdateAt { get; set; }
-        public DateTime? DeletedAt { get; set; }
-        public bool IsDeleted { get; set; } = false;
     }
 }

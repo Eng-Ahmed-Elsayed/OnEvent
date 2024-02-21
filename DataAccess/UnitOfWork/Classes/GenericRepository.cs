@@ -39,21 +39,28 @@ namespace DataAccess.UnitOfWork.Classes
             {
                 query = query.Where(filter);
             }
-
-            foreach (var includeProperty in includeProperties.Split
+            if (query.Count() > 0)
+            {
+                foreach (var includeProperty in includeProperties.Split
                 (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProperty);
-            }
+                {
+                    query = query.Include(includeProperty);
+                }
 
-            if (!parameters.OrderBy.IsNullOrEmpty())
-            {
-                query = _sortHelper.ApplySort(query, parameters.OrderBy);
+                if (!parameters.OrderBy.IsNullOrEmpty())
+                {
+                    query = _sortHelper.ApplySort(query, parameters.OrderBy);
+                }
             }
-
             return await PagedList<TEntity>.ToPagedList(query, parameters.PageNumber, parameters.PageSize);
         }
 
+        /// <summary>
+        /// Return a single record.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="includeProperties"></param>
+        /// <returns></returns>
         public async Task<TEntity> GetAsync(
             Expression<Func<TEntity, bool>> filter = null,
             string includeProperties = "")
@@ -65,12 +72,14 @@ namespace DataAccess.UnitOfWork.Classes
                 query = query.Where(filter);
             }
 
-            foreach (var includeProperty in includeProperties.Split
-                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            if (query.Count() > 0)
             {
-                query = query.Include(includeProperty);
+                foreach (var includeProperty in includeProperties.Split
+                    (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProperty);
+                }
             }
-
             return await query.FirstOrDefaultAsync();
         }
 

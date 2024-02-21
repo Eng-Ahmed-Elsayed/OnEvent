@@ -85,14 +85,14 @@ namespace DataAccess.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             // EmailModels with Event
-            modelBuilder.Entity<EmailModel>()
+            modelBuilder.Entity<EmailCraft>()
                 .HasOne<Event>()
                 .WithMany()
                 .HasForeignKey(e => e.EventId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // EmailModels with User
-            modelBuilder.Entity<EmailModel>()
+            modelBuilder.Entity<EmailCraft>()
                 .HasOne(e => e.User)
                 .WithMany(e => e.EmailModels)
                 .HasForeignKey(e => e.UserId)

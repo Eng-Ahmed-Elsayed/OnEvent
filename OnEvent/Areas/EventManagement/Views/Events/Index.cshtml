@@ -1,0 +1,27 @@
+﻿@model List<EventDto>
+
+@{
+    ViewBag.Title = "Event List";
+}
+
+<h2>Event List</h2>
+
+<table class="table">
+    <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Date</th>
+        <th>Location</th>
+        <!-- Add other columns as needed -->
+    </tr>
+    @foreach (var @event in Model)
+    {
+        <tr>
+            <td>@Html.DisplayFor(modelItem => @event.Title)</td>
+            <td>@Html.DisplayFor(modelItem => @event.Description)</td>
+            <td>@Html.DisplayFor(modelItem => @event.Date)</td>
+            <td>@Html.DisplayFor(modelItem => @event.Location)</td>
+            <!-- Add other columns as needed -->
+        </tr>
+    }
+</table>

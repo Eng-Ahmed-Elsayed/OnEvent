@@ -8,39 +8,64 @@ namespace DataAccess.UnitOfWork.Classes
     {
         private readonly ApplicationDbContext _context;
 
-        private GenericRepository<EmailModel> _emailModelRepository;
-        private ISortHelper<EmailModel> _emailModelSortHelper;
-
+        private GenericRepository<EmailCraft> _emailModelRepository;
         private GenericRepository<Event> _eventRepository;
-        private ISortHelper<Event> _eventSortHelper;
-
         private GenericRepository<Guest> _guestRepository;
-        private ISortHelper<Guest> _guestSortHelper;
-
         private GenericRepository<Invitation> _invitationRepository;
-        private ISortHelper<Invitation> _invitationSortHelper;
-
         private GenericRepository<Logistics> _logisticsRepository;
-        private ISortHelper<Logistics> _logisticsSortHelper;
-
         private GenericRepository<Notification> _notificationRepository;
-        private ISortHelper<Notification> _notificationSortHelper;
-
         private GenericRepository<RSVP> _RSVPRepository;
-        private ISortHelper<RSVP> _RSVPSortHelper;
 
         public UnitOfWork(ApplicationDbContext Context)
         {
             _context = Context;
         }
 
-        public GenericRepository<EmailModel> EmailModelRepository
+        private ISortHelper<T> GetSortHelper<T>()
+        {
+            // Implement logic to return appropriate ISortHelper instance based on the type T
+            if (typeof(T) == typeof(EmailCraft))
+            {
+                return (ISortHelper<T>)new SortHelper<EmailCraft>();
+            }
+            else if (typeof(T) == typeof(Event))
+            {
+                return (ISortHelper<T>)new SortHelper<Event>();
+            }
+            else if (typeof(T) == typeof(Guest))
+            {
+                return (ISortHelper<T>)new SortHelper<Guest>();
+            }
+            else if (typeof(T) == typeof(Invitation))
+            {
+                return (ISortHelper<T>)new SortHelper<Invitation>();
+            }
+            else if (typeof(T) == typeof(Logistics))
+            {
+                return (ISortHelper<T>)new SortHelper<Logistics>();
+            }
+            else if (typeof(T) == typeof(Notification))
+            {
+                return (ISortHelper<T>)new SortHelper<Notification>();
+            }
+            else if (typeof(T) == typeof(RSVP))
+            {
+                return (ISortHelper<T>)new SortHelper<RSVP>();
+            }
+            // Add other conditions for other entities if needed
+            else
+            {
+                throw new ArgumentException($"Sort helper for type {typeof(T)} is not supported.");
+            }
+        }
+
+        public GenericRepository<EmailCraft> EmailModelRepository
         {
             get
             {
                 if (_emailModelRepository == null)
                 {
-                    _emailModelRepository = new GenericRepository<EmailModel>(_context, _emailModelSortHelper);
+                    _emailModelRepository = new GenericRepository<EmailCraft>(_context, GetSortHelper<EmailCraft>());
                 }
                 return _emailModelRepository;
             }
@@ -51,7 +76,8 @@ namespace DataAccess.UnitOfWork.Classes
             {
                 if (_eventRepository == null)
                 {
-                    _eventRepository = new(_context, _eventSortHelper);
+
+                    _eventRepository = new(_context, GetSortHelper<Event>());
                 }
                 return _eventRepository;
             }
@@ -62,7 +88,7 @@ namespace DataAccess.UnitOfWork.Classes
             {
                 if (_guestRepository == null)
                 {
-                    _guestRepository = new(_context, _guestSortHelper);
+                    _guestRepository = new(_context, GetSortHelper<Guest>());
                 }
                 return _guestRepository;
             }
@@ -73,7 +99,7 @@ namespace DataAccess.UnitOfWork.Classes
             {
                 if (_invitationRepository == null)
                 {
-                    _invitationRepository = new(_context, _invitationSortHelper);
+                    _invitationRepository = new(_context, GetSortHelper<Invitation>());
                 }
                 return _invitationRepository;
             }
@@ -84,7 +110,7 @@ namespace DataAccess.UnitOfWork.Classes
             {
                 if (_logisticsRepository == null)
                 {
-                    _logisticsRepository = new(_context, _logisticsSortHelper);
+                    _logisticsRepository = new(_context, GetSortHelper<Logistics>());
                 }
                 return _logisticsRepository;
             }
@@ -95,7 +121,7 @@ namespace DataAccess.UnitOfWork.Classes
             {
                 if (_notificationRepository == null)
                 {
-                    _notificationRepository = new(_context, _notificationSortHelper);
+                    _notificationRepository = new(_context, GetSortHelper<Notification>());
                 }
                 return _notificationRepository;
             }
@@ -106,7 +132,7 @@ namespace DataAccess.UnitOfWork.Classes
             {
                 if (_RSVPRepository == null)
                 {
-                    _RSVPRepository = new(_context, _RSVPSortHelper);
+                    _RSVPRepository = new(_context, GetSortHelper<RSVP>());
                 }
                 return _RSVPRepository;
             }

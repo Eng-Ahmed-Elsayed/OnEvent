@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Models.Enums;
+using Models.Models;
 
-namespace Models.Models
+namespace Models.DataTransferObjects
 {
-    public class Guest
+    public class GuestDto
     {
         public Guid Id { get; set; }
         [Required]
@@ -14,15 +15,12 @@ namespace Models.Models
         public string Email { get; set; }
         public MealPreferences MealPreference { get; set; } = MealPreferences.None;
 
-        public Guid EventId { get; set; }
-        public Event? Event { get; set; }
+        public Guid? EventId { get; set; }
+        public EventDto? Event { get; set; }
         public RSVP? RSVP { get; set; }
 
 
-        [Required]
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdateAt { get; set; }
-        public DateTime? DeletedAt { get; set; }
-        public bool IsDeleted { get; set; } = false;
     }
 }

@@ -3,7 +3,7 @@ using Models.Interfaces;
 
 namespace Models.Models
 {
-    public class EmailModel : Communication
+    public class EmailCraft : Communication
     {
         [Required]
         [EmailAddress]

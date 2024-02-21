@@ -1,27 +1,47 @@
-﻿using DataAccess.UnitOfWork.Interfaces;
+﻿using AutoMapper;
+using DataAccess.UnitOfWork.Classes;
+using DataAccess.UnitOfWork.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Models.DataTransferObjects;
 using Models.Models;
 
 namespace OnEvent.Areas.EventManagement.Controllers
 {
+    [Area("EventManagement")]
+    [Authorize]
     public class EventsController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<EventsController> _logger;
+        private readonly IMapper _mapper;
+        private readonly UserManager<User> _userManager;
 
-        public EventsController(IUnitOfWork unitOfWork, ILogger<EventsController> logger)
+
+        public EventsController(IUnitOfWork unitOfWork,
+            ILogger<EventsController> logger,
+            IMapper mapper,
+            UserManager<User> userManager)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
+            _mapper = mapper;
+            _userManager = userManager;
         }
         // GET: EventsController
         public async Task<IActionResult> Index()
         {
             try
             {
-                var events = await _unitOfWork.EventRepository.GetListAsync(x => !x.IsDeleted);
-                return View(events);
+                Parameters parameters = new Parameters()
+                {
+                    OrderBy = "Title",
+                    PageNumber = 1,
+                    PageSize = 20,
+                };
+                var events = await _unitOfWork.EventRepository.GetListAsync(x => !x.IsDeleted, parameters);
+                return View(_mapper.Map<List<EventDto>>(events));
             }
             catch (Exception ex)
             {
@@ -37,7 +57,8 @@ namespace OnEvent.Areas.EventManagement.Controllers
             {
                 // Get the event if it is not null return it, else redirect
                 var eventObj = await _unitOfWork.EventRepository.GetByIdAsync(id);
-                return eventObj != null ? View(eventObj) : RedirectToAction("Index");
+
+                return eventObj != null ? View(_mapper.Map<EventDto>(eventObj)) : RedirectToAction("Index");
             }
             catch (Exception ex)
             {
@@ -46,13 +67,12 @@ namespace OnEvent.Areas.EventManagement.Controllers
             }
         }
 
-        [Authorize]
         // GET: EventsController/Create
         public async Task<IActionResult> Create()
         {
             try
             {
-                Event eventObj = new();
+                EventDto eventObj = new();
                 return View(eventObj);
             }
             catch (Exception ex)
@@ -65,7 +85,7 @@ namespace OnEvent.Areas.EventManagement.Controllers
         // POST: EventsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Event eventDto)
+        public async Task<IActionResult> Create(EventDto eventDto)
         {
             try
             {
@@ -74,17 +94,19 @@ namespace OnEvent.Areas.EventManagement.Controllers
                 {
                     return BadRequest(ModelState);
                 }
+                // Get the organizer
+                var organizer = await _userManager.FindByEmailAsync(User.Identity.Name);
                 // Create new event object
                 Event eventObj = new()
                 {
                     Id = Guid.NewGuid(),
-                    OrganizerId = User.Identity.Name,
+                    Organizer = organizer,
                     CreatedAt = DateTime.UtcNow,
                     Title = eventDto.Title,
                     Description = eventDto.Description,
                     Date = eventDto.Date,
                     Location = eventDto.Location,
-                    Logistics = eventDto.Logistics,
+                    //Logistics = eventDto.Logistics,
                 };
                 // Add new event then save
                 await _unitOfWork.EventRepository.InsertAsync(eventObj);
@@ -105,7 +127,7 @@ namespace OnEvent.Areas.EventManagement.Controllers
             try
             {
                 Event eventObj = await _unitOfWork.EventRepository.GetAsync(x => x.Id == id);
-                return eventObj != null ? View(eventObj) : RedirectToAction(nameof(Index));
+                return eventObj != null ? View(_mapper.Map<EventDto>(eventObj)) : RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
@@ -117,7 +139,7 @@ namespace OnEvent.Areas.EventManagement.Controllers
         // POST: EventsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Event eventDto)
+        public async Task<IActionResult> Edit(Guid id, EventDto eventDto)
         {
             try
             {
@@ -155,7 +177,7 @@ namespace OnEvent.Areas.EventManagement.Controllers
         // POST: EventsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(Event eventDto)
+        public async Task<IActionResult> Delete(EventDto eventDto)
         {
             try
             {
@@ -166,7 +188,7 @@ namespace OnEvent.Areas.EventManagement.Controllers
                 var eventObj = await _unitOfWork.EventRepository.GetAsync(x => x.Id == eventDto.Id);
                 if (eventObj != null)
                 {
-                    await _unitOfWork.EventRepository.DeleteAsync(eventDto.Id);
+                    await _unitOfWork.EventRepository.DeleteAsync(eventObj.Id);
                     await _unitOfWork.SaveChangesAsync();
                 }
                 return RedirectToAction(nameof(Index));

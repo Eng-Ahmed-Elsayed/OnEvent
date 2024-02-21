@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240216232323_InitializeTables")]
+    [Migration("20240221001444_InitializeTables")]
     partial class InitializeTables
     {
         /// <inheritdoc />
@@ -54,21 +54,21 @@ namespace DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "c4a2b8e8-d967-4c73-ab9e-c16c7c6ceb42",
+                            Id = "124878f6-6c0e-4760-877d-5b74d1f9f022",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "75b57b73-9d81-4f64-812b-2cfe5a471958",
-                            Name = "Admin",
-                            NormalizedName = "ADMINI"
+                            Id = "289878f6-6c0e-4760-877d-5b74d1f9f022",
+                            Name = "Moderator",
+                            NormalizedName = "MODERATOR"
                         },
                         new
                         {
-                            Id = "67cddc8e-290d-48d8-83f9-a74c85c5d427",
-                            Name = "Moderator",
-                            NormalizedName = "MODERATOR"
+                            Id = "318278f6-6c0e-4760-877d-5b74d1f9f022",
+                            Name = "Admin",
+                            NormalizedName = "ADMINI"
                         });
                 });
 
@@ -182,7 +182,7 @@ namespace DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Models.Models.EmailModel", b =>
+            modelBuilder.Entity("Models.Models.EmailCraft", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -218,7 +218,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("EmailModel");
+                    b.ToTable("EmailCraft");
                 });
 
             modelBuilder.Entity("Models.Models.Event", b =>
@@ -240,6 +240,9 @@ namespace DataAccess.Migrations
                         .IsRequired()
                         .HasMaxLength(800)
                         .HasColumnType("nvarchar(800)");
+
+                    b.Property<string>("ImgPath")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -290,10 +293,8 @@ namespace DataAccess.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("MealPreference")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                    b.Property<int>("MealPreference")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -480,6 +481,9 @@ namespace DataAccess.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("ProfileImgPath")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -554,7 +558,7 @@ namespace DataAccess.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Models.Models.EmailModel", b =>
+            modelBuilder.Entity("Models.Models.EmailCraft", b =>
                 {
                     b.HasOne("Models.Models.Event", null)
                         .WithMany()
@@ -654,8 +658,7 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("Models.Models.Guest", b =>
                 {
-                    b.Navigation("RSVP")
-                        .IsRequired();
+                    b.Navigation("RSVP");
                 });
 
             modelBuilder.Entity("Models.Models.User", b =>
