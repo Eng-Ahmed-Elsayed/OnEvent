@@ -52,7 +52,6 @@ namespace DataAccess.UnitOfWork.Classes
             {
                 return (ISortHelper<T>)new SortHelper<RSVP>();
             }
-            // Add other conditions for other entities if needed
             else
             {
                 throw new ArgumentException($"Sort helper for type {typeof(T)} is not supported.");
