@@ -20,7 +20,6 @@ namespace DataAccess.UnitOfWork.Classes
         }
         /// <summary>
         /// Get Paged List from TEntity.
-        /// Ex for QueryString localhost:5001/api/events?pageNumber=2&pageSize=2
         /// </summary>
         /// <param name="filter"></param>
         /// <param name="orderBy"></param>

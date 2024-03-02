@@ -50,10 +50,10 @@ namespace DataAccess.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Event with Logistics
-            modelBuilder.Entity<Event>()
-                .HasMany(e => e.Logistics)
-                .WithOne()
-                .HasForeignKey(e => e.EventId)
+            modelBuilder.Entity<Logistics>()
+                .HasOne<Event>()
+                .WithOne(e => e.Logistics)
+                .HasForeignKey<Logistics>(e => e.EventId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Event with RSVPs

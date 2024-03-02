@@ -27,17 +27,18 @@
     <Folder Include="Areas\GuestManagement\Views\" />
     <Folder Include="Areas\IntegrationAndExternalServices\Controllers\" />
     <Folder Include="Areas\IntegrationAndExternalServices\Views\" />
-    <Folder Include="Areas\InvitationManagement\Controllers\" />
     <Folder Include="Areas\InvitationManagement\Views\" />
     <Folder Include="Areas\NotificationAndCommunication\Controllers\" />
     <Folder Include="Areas\NotificationAndCommunication\Views\" />
     <Folder Include="Areas\ReportingAndAnalytics\Controllers\" />
     <Folder Include="Areas\ReportingAndAnalytics\Views\" />
+    <Folder Include="wwwroot\UploadedFiles\Events\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
+    <ProjectReference Include="..\Utility\Utility.csproj" />
   </ItemGroup>
 
 </Project>

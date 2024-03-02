@@ -12,13 +12,23 @@ namespace DataAccess.UnitOfWork.Classes
         public bool HasPrevious => CurrentPage > 1;
         public bool HasNext => CurrentPage < TotalPages;
 
+        public List<T> Items { get; private set; }
+
+
+        /// <summary>
+        /// Generate new PagedList.
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="count"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
         public PagedList(List<T> items, int count, int pageNumber, int pageSize)
         {
             TotalCount = count;
             PageSize = pageSize;
             CurrentPage = pageNumber;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
-
+            Items = items;
             AddRange(items);
         }
 

@@ -5,6 +5,7 @@ using DataAccess.UnitOfWork.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Models.Models;
 using OnEvent.MappingProfiles;
+using Utility.FileManager;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,8 @@ builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfi
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddScoped(typeof(ISortHelper<>), typeof(SortHelper<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddScoped<IFileManagerService, FileManagerService>();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

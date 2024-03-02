@@ -49,11 +49,13 @@
 
 2. Event Creation and Management:
 
-    * As a user, I want to be able to create a new event by providing event details such as title, description, date, time, and location.
-    * As a user, I want to be able to edit the details of an existing event.
-    * As a user, I want to be able to delete an event that I created.
-    * As a user, I want to be able to view a list of all events that I have created or RSVP'd to.
-    * As a user, I want to be able to search for events by title, date, or location.
+    * As a user, I want to be able to create a new event by providing event details such as title
+    , locationType, description, date, time, and location. => Done
+    * As a user, I want to be able to review the details of an existing event. 
+    * As a user, I want to be able to edit the details of an existing event. => Done
+    * As a user, I want to be able to delete an event that I created. => Done
+    * As a user, I want to be able to view a list of all events that I have created or RSVP'd to. => Done
+    * As a user, I want to be able to search for events by title, date, or location. => Done
 
 3. Invitation Management:
 
