@@ -35,7 +35,7 @@ namespace Utility.FileManager
             {
                 await file.CopyToAsync(stream);
             }
-            return await Task.FromResult(dbPath);
+            return await Task.FromResult(dbPath.Split("wwwroot\\")[1]);
         }
         /// <summary>
         /// Delete file with full path.
@@ -46,7 +46,8 @@ namespace Utility.FileManager
             if (!string.IsNullOrEmpty(filePath))
             {
                 // Delete with full path
-                File.Delete(Path.Combine(Directory.GetCurrentDirectory(), filePath));
+                //File.Delete(Path.Combine(Directory.GetCurrentDirectory(), filePath));
+                File.Delete(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath));
             }
         }
     }

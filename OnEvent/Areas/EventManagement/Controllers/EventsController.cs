@@ -57,18 +57,8 @@ namespace OnEvent.Areas.EventManagement.Controllers
                     || x.Location.Contains(searchString)
                     || x.Date.ToString().Contains(searchString))
                 , parameters);
+                // Add the parameters to the ViewBag
                 ViewBag.searchString = searchString;
-                //if (parameters.OrderBy.IsNullOrEmpty())
-                //{
-                //    ViewBag.orderBy = "";
-                //}
-                //else
-                //{
-
-                //    ViewBag.orderBy = parameters.OrderBy.EndsWith("desc")
-                //        ? parameters.OrderBy
-                //        : parameters.OrderBy + " desc";
-                //}
                 ViewBag.orderBy = parameters.OrderBy.IsNullOrEmpty()
                     ? ""
                     : parameters.OrderBy.ToLower();
@@ -87,7 +77,8 @@ namespace OnEvent.Areas.EventManagement.Controllers
             try
             {
                 // Get the event if it is not null return it, else redirect
-                var eventObj = await _unitOfWork.EventRepository.GetByIdAsync(id);
+                var eventObj = await _unitOfWork.EventRepository.GetAsync(x => x.Id == id && !x.IsDeleted,
+                    "Invitations,Guests,Logistics");
 
                 return eventObj != null ? View(_mapper.Map<EventDto>(eventObj)) : RedirectToAction("Index");
             }
@@ -246,6 +237,10 @@ namespace OnEvent.Areas.EventManagement.Controllers
                 var eventObj = await _unitOfWork.EventRepository.GetAsync(x => x.Id == id);
                 if (eventObj != null)
                 {
+                    if (eventObj.ImgPath != null)
+                    {
+                        _fileManagerService.DeleteFile(eventObj.ImgPath);
+                    }
                     await _unitOfWork.EventRepository.DeleteAsync(eventObj.Id);
                     await _unitOfWork.SaveChangesAsync();
                 }
