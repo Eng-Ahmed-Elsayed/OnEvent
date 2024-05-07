@@ -13,18 +13,31 @@ namespace Models.DataTransferObjects
         [StringLength(200, MinimumLength = 5)]
         public string Title { get; set; }
         [Required]
+        [StringLength(200, MinimumLength = 5)]
+        // Brief description of the event and its purpose
+        public string Brief { get; set; }
+        [Required]
+        [StringLength(400, MinimumLength = 5)]
+        // Brief overview of what will happen during the event
+        public string Agenda { get; set; }
+        [Required]
         [StringLength(800, MinimumLength = 5)]
         public string Description { get; set; }
+
         [Required]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DateRange("2000-01-01", "2099-12-31")]
         public DateTime Date { get; set; } = DateTime.Now;
         [Required]
+        [HourInDay(ErrorMessage = "Please enter a valid hour in a day.")]
+        public TimeSpan Time { get; set; }
+        [Required]
         [StringLength(400, MinimumLength = 5)]
         public string Location { get; set; }
         [Required]
         public LocationType LocationType { get; set; }
+
         public string? ImgPath { get; set; }
         [Display(Name = "Event Image")]
         [FileSize]

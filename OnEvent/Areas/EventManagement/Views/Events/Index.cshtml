@@ -11,7 +11,7 @@
 
     <div class="d-flex justify-content-between">
         <span>
-            <a asp-action="Create" class="btn btn-primary">Create New</a>
+            <a asp-action="Create" class="btn btn-outline-primary">Create New</a>
         </span>
         @* Search *@
         <form asp-action="Index" method="get">
@@ -45,7 +45,7 @@
                        asp-route-searchString="@searchString">Date</a>
                 </th>
                 <th>Location</th>
-                <th>Actions</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -60,24 +60,30 @@
                     <td>@slicedDescription</td>
                     <td>@item.Date.ToShortDateString()</td>
                     <td>@item.Location</td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info me-3">Details</a>
-                        <a href="@Url.Action("Edit", "Events", new { id = item.Id })" class="btn btn-sm btn-success me-3">Edit</a>
-                        <button class="btn btn-sm btn-danger"
-                                data-bs-toggle="modal"
-                                data-bs-target="#confirmationModal">
-                            Delete
-                        </button>
-                        @{
-                            await Html.RenderPartialAsync("_Confirmation", new
-                            {
-                                title = "Delete Event",
-                                body = $"Do you want to delete '{slicedDescription}'",
-                                controller = "Events",
-                                action = "Delete",
-                                id = item.Id
-                            });
-                        }
+                    <td class="d-flex">
+                        <a class="btn btn-sm btn-outline-primary me-3"
+                           asp-area="InvitationManagement"
+                           asp-controller="Invitation"
+                           asp-action="index"
+                           asp-route-eventId="@item.Id">Invitations</a>
+                        <a class="btn btn-sm btn-outline-secondary me-3"
+                           asp-area="GuestManagement"
+                           asp-controller="Guest"
+                           asp-action="GuestsList"
+                           asp-route-eventId="@item.Id">Guests</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info me-3">Details</a>
+                        <a asp-action="Edit"
+                           asp-route-id="@item.Id"
+                           class="btn btn-sm btn-outline-success me-3">Edit</a>
+                        <form asp-action="Delete"
+                              asp-route-id="@item.Id"
+                              method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-warning"
+                                    onclick="return confirm('Are you sure you want to delete @item.Title?')">
+                                Delete
+                            </button>
+                        </form>
                     </td>
                 </tr>
             }

@@ -194,8 +194,8 @@ namespace DataAccess.Migrations
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasMaxLength(800)
-                        .HasColumnType("nvarchar(800)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<string>("Subject")
                         .IsRequired()
@@ -223,6 +223,16 @@ namespace DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Agenda")
+                        .IsRequired()
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("Brief")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -255,6 +265,9 @@ namespace DataAccess.Migrations
                     b.Property<string>("OrganizerId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("time");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -290,6 +303,9 @@ namespace DataAccess.Migrations
                     b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("InvitationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -307,6 +323,10 @@ namespace DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
+
+                    b.HasIndex("InvitationId")
+                        .IsUnique()
+                        .HasFilter("[InvitationId] IS NOT NULL");
 
                     b.ToTable("Guests");
                 });
@@ -386,8 +406,8 @@ namespace DataAccess.Migrations
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasMaxLength(800)
-                        .HasColumnType("nvarchar(800)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -456,6 +476,12 @@ namespace DataAccess.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -593,7 +619,14 @@ namespace DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Models.Models.Invitation", "Invitation")
+                        .WithOne("Guest")
+                        .HasForeignKey("Models.Models.Guest", "InvitationId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Event");
+
+                    b.Navigation("Invitation");
                 });
 
             modelBuilder.Entity("Models.Models.Invitation", b =>
@@ -658,6 +691,11 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("Models.Models.Guest", b =>
                 {
                     b.Navigation("RSVP");
+                });
+
+            modelBuilder.Entity("Models.Models.Invitation", b =>
+                {
+                    b.Navigation("Guest");
                 });
 
             modelBuilder.Entity("Models.Models.User", b =>

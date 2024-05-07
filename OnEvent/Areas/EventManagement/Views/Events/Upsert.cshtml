@@ -18,9 +18,21 @@
             <label asp-for="Title"></label>
             <span asp-validation-for="Title" class="text-danger"></span>
         </div>
+        @* Brief *@
+        <div class="form-floating mb-3">
+            <textarea asp-for="Brief" class="form-control" rows="10" placeholder=""></textarea>
+            <label asp-for="Brief"></label>
+            <span asp-validation-for="Brief" class="text-danger"></span>
+        </div>
+        @* Agenda *@
+        <div class="form-floating mb-3">
+            <textarea asp-for="Agenda" class="form-control" rows="15" placeholder=""></textarea>
+            <label asp-for="Agenda"></label>
+            <span asp-validation-for="Agenda" class="text-danger"></span>
+        </div>
         @* Description *@
         <div class="form-floating mb-3">
-            <textarea asp-for="Description" class="form-control" rows="10" placeholder=""></textarea>
+            <textarea asp-for="Description" class="form-control" rows="20" placeholder=""></textarea>
             <label asp-for="Description"></label>
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
@@ -29,6 +41,12 @@
             <label asp-for="Date" class="control-label"></label>
             <input asp-for="Date" class="form-control" type="date" placeholder="" />
             <span asp-validation-for="Date" class="text-danger"></span>
+        </div>
+        @* Time *@
+        <div class="form-group mb-3">
+            <label asp-for="Time" class="control-label"></label>
+            <input asp-for="Time" class="form-control" type="time" placeholder="" />
+            <span asp-validation-for="Time" class="text-danger"></span>
         </div>
         @* Location *@
         <div class="form-floating mb-3">

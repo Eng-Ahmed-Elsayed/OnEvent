@@ -8,10 +8,12 @@ using Microsoft.IdentityModel.Tokens;
 using Models.DataTransferObjects;
 using Models.Models;
 using Utility.FileManager;
+using Utility.Text;
 
 namespace OnEvent.Areas.EventManagement.Controllers
 {
     [Area("EventManagement")]
+    [Route("dashboard/events")]
     [Authorize]
     public class EventsController : Controller
     {
@@ -35,8 +37,7 @@ namespace OnEvent.Areas.EventManagement.Controllers
             _fileManagerService = fileManagerService;
         }
 
-        // GET: EventsController
-        /// Ex for QueryString localhost:5001/api/events?pageNumber=2&pageSize=2
+        // GET: dashboard/events
         public async Task<IActionResult> Index([FromQuery] Parameters? parameters, string? searchString)
         {
             try
@@ -47,21 +48,28 @@ namespace OnEvent.Areas.EventManagement.Controllers
                     {
                         OrderBy = "title",
                         PageNumber = 1,
-                        PageSize = 3,
+                        PageSize = 5,
                     };
                 }
-                parameters.PageSize = 3;
-                var events = await _unitOfWork.EventRepository.GetListAsync(x => !x.IsDeleted
-                && searchString.IsNullOrEmpty() ? true
+                // Get the organizer
+                var organizer = await _userManager.FindByEmailAsync(User.Identity.Name);
+                // Get the events
+                var events = await _unitOfWork.EventRepository.GetListAsync(x =>
+                !x.IsDeleted
+                && x.OrganizerId == organizer.Id
+                && (searchString.IsNullOrEmpty() ? true
                 : (x.Title.Contains(searchString)
                     || x.Location.Contains(searchString)
-                    || x.Date.ToString().Contains(searchString))
+                    || x.Date.ToString().Contains(searchString)))
                 , parameters);
                 // Add the parameters to the ViewBag
                 ViewBag.searchString = searchString;
                 ViewBag.orderBy = parameters.OrderBy.IsNullOrEmpty()
                     ? ""
                     : parameters.OrderBy.ToLower();
+                // Toast messages if redirected
+                ViewData["ToastHeader"] = TempData["ToastHeader"]?.ToString();
+                ViewData["ToastMessage"] = TempData["ToastMessage"]?.ToString();
                 return View(_mapper.Map<ViewPagedList<EventDto>>(events));
             }
             catch (Exception ex)
@@ -71,15 +79,21 @@ namespace OnEvent.Areas.EventManagement.Controllers
             }
         }
 
-        // GET: EventsController/Details/5
+        // GET: dashboard/events/Details/{id}
+        [Route("{id:guid}")]
         public async Task<IActionResult> Details(Guid id)
         {
             try
             {
+                // Get the organizer
+                var organizer = await _userManager.FindByEmailAsync(User.Identity.Name);
                 // Get the event if it is not null return it, else redirect
-                var eventObj = await _unitOfWork.EventRepository.GetAsync(x => x.Id == id && !x.IsDeleted,
+                var eventObj = await _unitOfWork.EventRepository.GetAsync(x => x.Id == id
+                                    && !x.IsDeleted
+                                    && x.OrganizerId == organizer.Id,
                     "Invitations,Guests,Logistics");
-
+                ViewData["ToastHeader"] = TempData["ToastHeader"]?.ToString();
+                ViewData["ToastMessage"] = TempData["ToastMessage"]?.ToString();
                 return eventObj != null ? View(_mapper.Map<EventDto>(eventObj)) : RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -89,13 +103,14 @@ namespace OnEvent.Areas.EventManagement.Controllers
             }
         }
 
-        // GET: EventsController/Create
-        public async Task<IActionResult> Create()
+        // GET: dashboard/events/Create
+        [Route("create")]
+        public IActionResult Create()
         {
             try
             {
-                EventDto eventObj = new();
-                return View("Upsert", eventObj);
+                EventDto eventDto = new();
+                return View("Upsert", eventDto);
             }
             catch (Exception ex)
             {
@@ -104,9 +119,10 @@ namespace OnEvent.Areas.EventManagement.Controllers
             }
         }
 
-        // POST: EventsController/Create
+        // POST: dashboard/events/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("create")]
         public async Task<IActionResult> Create(EventDto eventDto)
         {
             try
@@ -130,10 +146,13 @@ namespace OnEvent.Areas.EventManagement.Controllers
                 {
                     Id = Guid.NewGuid(),
                     Organizer = organizer,
-                    Title = eventDto.Title.ToUpper(),
+                    Title = StringGlobalization.ToTitleCase(eventDto.Title),
+                    Brief = eventDto.Brief,
+                    Agenda = eventDto.Agenda,
                     Description = eventDto.Description,
                     Date = eventDto.Date,
-                    Location = eventDto.Location,
+                    Time = eventDto.Time,
+                    Location = StringGlobalization.ToTitleCase(eventDto.Location),
                     LocationType = eventDto.LocationType,
                     ImgPath = dbPath,
                     CreatedAt = DateTime.UtcNow,
@@ -155,7 +174,8 @@ namespace OnEvent.Areas.EventManagement.Controllers
             }
         }
 
-        // GET: EventsController/Edit/5
+        // GET: dashboard/events/{id}/Edit
+        [Route("{id:guid}/edit")]
         public async Task<IActionResult> Edit(Guid id)
         {
 
@@ -174,9 +194,10 @@ namespace OnEvent.Areas.EventManagement.Controllers
             };
         }
 
-        // POST: EventsController/Edit/5
+        // POST: dashboard/events/{id}/Edit/
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("{id:guid}/edit")]
         public async Task<IActionResult> Edit(Guid id, EventDto eventDto)
         {
             try
@@ -186,9 +207,12 @@ namespace OnEvent.Areas.EventManagement.Controllers
                 {
                     return View("Upsert", eventDto);
                 }
+                // Get the organizer
+                var organizer = await _userManager.FindByEmailAsync(User.Identity.Name);
                 // Get the event if it is not null update the redirect, else return to the same view 
                 // with the eventObj
-                Event eventObj = await _unitOfWork.EventRepository.GetAsync(x => x.Id == eventDto.Id,
+                Event eventObj = await _unitOfWork.EventRepository.GetAsync(x => x.Id == eventDto.Id
+                    && x.OrganizerId == organizer.Id,
                     "Logistics");
                 if (eventObj != null)
                 {
@@ -199,10 +223,11 @@ namespace OnEvent.Areas.EventManagement.Controllers
                         eventObj.ImgPath = await _fileManagerService.UploadFile(eventDto.ImageFile,
                                         "Events");
                     }
-                    eventObj.Title = eventDto.Title.ToUpper();
+                    eventObj.Title = StringGlobalization.ToTitleCase(eventDto.Title);
                     eventObj.Description = eventDto.Description;
                     eventObj.Date = eventDto.Date;
-                    eventObj.Location = eventDto.Location;
+                    eventObj.Time = eventDto.Time;
+                    eventObj.Location = StringGlobalization.ToTitleCase(eventDto.Location);
                     eventObj.LocationType = eventDto.LocationType;
                     eventObj.Logistics.EquipmentNeeded = eventDto.Logistics.EquipmentNeeded;
                     eventObj.Logistics.CateringDetails = eventDto.Logistics.CateringDetails;
@@ -223,9 +248,10 @@ namespace OnEvent.Areas.EventManagement.Controllers
         }
 
 
-        // POST: EventsController/Delete/5
+        // POST: dashboard/events/{id}/Delete/
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("{id:guid}/delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             try
@@ -234,7 +260,11 @@ namespace OnEvent.Areas.EventManagement.Controllers
                 {
                     return BadRequest();
                 }
-                var eventObj = await _unitOfWork.EventRepository.GetAsync(x => x.Id == id);
+                // Get the organizer
+                var organizer = await _userManager.FindByEmailAsync(User.Identity.Name);
+                var eventObj = await _unitOfWork.EventRepository.GetAsync(x => x.Id == id
+                    && !x.IsDeleted
+                    && x.OrganizerId == organizer.Id);
                 if (eventObj != null)
                 {
                     if (eventObj.ImgPath != null)

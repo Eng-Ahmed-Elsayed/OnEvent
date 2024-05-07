@@ -1,5 +1,5 @@
-﻿using Models.Enums;
-using Models.Interfaces;
+﻿using Models.Abstraction;
+using Models.Enums;
 
 namespace Models.Models
 {

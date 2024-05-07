@@ -1,0 +1,21 @@
+﻿<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true">
+    <div class="toast-header">
+        <strong class="me-auto toast-header-text">
+            ViewData["ToastHeader"])
+        </strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+        @ViewData["ToastMessage"]
+    </div>
+</div>
+
+<script>
+    function showToast(message, header) {
+        var toastElement = document.querySelector('.toast');
+        var toastInstance = new bootstrap.Toast(toastElement);
+        document.querySelector('.toast-body').innerText = message;
+        document.querySelector('.toast-header-text').innerText = header;
+        toastInstance.show();
+    }
+</script>

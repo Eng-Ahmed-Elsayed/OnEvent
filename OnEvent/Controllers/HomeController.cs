@@ -15,6 +15,7 @@ namespace OnEvent.Controllers
 
         public IActionResult Index()
         {
+            ViewData["ToastMessage"] = "Welcome to my ASP.NET Core MVC application!";
             return View();
         }
 

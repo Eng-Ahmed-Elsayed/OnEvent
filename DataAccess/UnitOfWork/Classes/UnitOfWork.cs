@@ -8,7 +8,7 @@ namespace DataAccess.UnitOfWork.Classes
     {
         private readonly ApplicationDbContext _context;
 
-        private GenericRepository<EmailCraft> _emailModelRepository;
+        private GenericRepository<EmailCraft> _emailCraftRepository;
         private GenericRepository<Event> _eventRepository;
         private GenericRepository<Guest> _guestRepository;
         private GenericRepository<Invitation> _invitationRepository;
@@ -32,31 +32,31 @@ namespace DataAccess.UnitOfWork.Classes
             // Implement logic to return appropriate ISortHelper instance based on the type T
             if (typeof(T) == typeof(EmailCraft))
             {
-                return (ISortHelper<T>)new SortHelper<EmailCraft>();
+                return (ISortHelper<T>) new SortHelper<EmailCraft>();
             }
             else if (typeof(T) == typeof(Event))
             {
-                return (ISortHelper<T>)new SortHelper<Event>();
+                return (ISortHelper<T>) new SortHelper<Event>();
             }
             else if (typeof(T) == typeof(Guest))
             {
-                return (ISortHelper<T>)new SortHelper<Guest>();
+                return (ISortHelper<T>) new SortHelper<Guest>();
             }
             else if (typeof(T) == typeof(Invitation))
             {
-                return (ISortHelper<T>)new SortHelper<Invitation>();
+                return (ISortHelper<T>) new SortHelper<Invitation>();
             }
             else if (typeof(T) == typeof(Logistics))
             {
-                return (ISortHelper<T>)new SortHelper<Logistics>();
+                return (ISortHelper<T>) new SortHelper<Logistics>();
             }
             else if (typeof(T) == typeof(Notification))
             {
-                return (ISortHelper<T>)new SortHelper<Notification>();
+                return (ISortHelper<T>) new SortHelper<Notification>();
             }
             else if (typeof(T) == typeof(RSVP))
             {
-                return (ISortHelper<T>)new SortHelper<RSVP>();
+                return (ISortHelper<T>) new SortHelper<RSVP>();
             }
             else
             {
@@ -64,15 +64,15 @@ namespace DataAccess.UnitOfWork.Classes
             }
         }
 
-        public GenericRepository<EmailCraft> EmailModelRepository
+        public GenericRepository<EmailCraft> EmailCraftRepository
         {
             get
             {
-                if (_emailModelRepository == null)
+                if (_emailCraftRepository == null)
                 {
-                    _emailModelRepository = new GenericRepository<EmailCraft>(_context, GetSortHelper<EmailCraft>());
+                    _emailCraftRepository = new GenericRepository<EmailCraft>(_context, GetSortHelper<EmailCraft>());
                 }
-                return _emailModelRepository;
+                return _emailCraftRepository;
             }
         }
         public GenericRepository<Event> EventRepository

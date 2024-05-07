@@ -6,7 +6,7 @@ namespace DataAccess.UnitOfWork.Interfaces
     public interface IUnitOfWork : IAsyncDisposable
     {
         Task SaveChangesAsync();
-        GenericRepository<EmailCraft> EmailModelRepository { get; }
+        GenericRepository<EmailCraft> EmailCraftRepository { get; }
         GenericRepository<Event> EventRepository { get; }
         GenericRepository<Guest> GuestRepository { get; }
         GenericRepository<Invitation> InvitationRepository { get; }

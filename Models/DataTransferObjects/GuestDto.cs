@@ -18,7 +18,8 @@ namespace Models.DataTransferObjects
         public Guid? EventId { get; set; }
         public EventDto? Event { get; set; }
         public RSVP? RSVP { get; set; }
-
+        public Guid? InvitationId { get; set; }
+        public InvitationDto? Invitation { get; set; }
 
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdateAt { get; set; }

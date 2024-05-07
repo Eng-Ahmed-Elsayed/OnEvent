@@ -1,0 +1,99 @@
+﻿@model GuestDto
+
+@{
+    ViewBag.Title = Model.Id == Guid.Empty ? "Guest Registration" : "Edit Info";
+    bool isGuest = ViewBag.isGuest == true ? true : false;
+    bool isRegister = Model.Id == Guid.Empty ? true : false;
+    string theAction = "";
+    Guid? routeId = Guid.Empty;
+    // If new Guest
+    if (isGuest && isRegister)
+    {
+        theAction = "GuestRegistration";
+        routeId = Model.InvitationId;
+    }
+    // If Guest Edit his info
+    else if (isGuest && !isRegister)
+    {
+        theAction = "EditInfo";
+        routeId = Model.Id;
+    }
+    // If organizer add new guest
+    else if (!isGuest && isRegister)
+    {
+        theAction = "AddGuest";
+        routeId = Model.EventId;
+
+    }
+    // If organizer edit guest
+    else if (!isGuest && !isRegister)
+    {
+        theAction = "EditGuest";
+        routeId = Model.Id;
+
+    }
+
+}
+
+<div class="container">
+    <h1>
+        @(isRegister ?
+            "Register New Guest To"
+            : "Edit Guest Info For") @Model.Event.Title Event
+    </h1>
+
+    <form asp-action="@theAction"
+          asp-route-id="@(isRegister ? Model.InvitationId : Model.Id)"
+          method="post">
+        @Html.AntiForgeryToken()
+        @* Email *@
+        <div class="form-floating mb-3">
+            <input asp-for="Email" class="form-control" placeholder="" />
+            <label asp-for="Email"></label>
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        @* Name *@
+        <div class="form-floating mb-3">
+            <input asp-for="Name" class="form-control" placeholder="" />
+            <label asp-for="Name"></label>
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        @* Meal Preference *@
+        <div class="form-group mb-3">
+            <label asp-for="MealPreference" class="control-label"></label>
+            <select asp-for="MealPreference" asp-items="Html.GetEnumSelectList<MealPreferences>()" class="form-select">
+            </select>
+            <span asp-validation-for="MealPreference" class="text-danger"></span>
+        </div>
+        @* RSVP Statues *@
+        @if (isGuest)
+        {
+            <div class="form-group mb-3">
+                <label asp-for="RSVP.RSVPStatus" class="control-label"></label>
+                <select asp-for="RSVP.RSVPStatus" asp-items="Html.GetEnumSelectList<RSVPStatus>()" class="form-select">
+                </select>
+                <span asp-validation-for="RSVP.RSVPStatus" class="text-danger"></span>
+            </div>
+        }
+        <div class="d-flex justify-content-evenly">
+            <div>
+                <a asp-asp-area="EventManagement"
+                   asp-action="Details"
+                   asp-rout-id="@Model.Event.Id"
+                   class="btn btn-outline-danger">Back to Event</a>
+            </div>
+            <div class="form-group">
+                <input type="submit"
+                       value="@(Model.Id == Guid.Empty ? "Register New Guest" : "Update Info")"
+                       class="btn btn-outline-primary" />
+            </div>
+        </div>
+    </form>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

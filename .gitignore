@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/OnEvent/appsettings.json
+/OnEvent/wwwroot/UploadedFiles/
+/OnEvent/Tasks.md

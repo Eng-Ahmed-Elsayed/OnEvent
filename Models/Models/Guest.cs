@@ -17,6 +17,8 @@ namespace Models.Models
         public Guid EventId { get; set; }
         public Event? Event { get; set; }
         public RSVP? RSVP { get; set; }
+        public Guid? InvitationId { get; set; }
+        public Invitation? Invitation { get; set; }
 
 
         [Required]

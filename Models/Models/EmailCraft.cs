@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Models.Interfaces;
+using Models.Abstraction;
 
 namespace Models.Models
 {

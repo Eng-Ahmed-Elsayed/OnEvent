@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/OnEvent.styles.css" asp-append-version="true" />
 </head>
-<body >
+<body>
     <header>
-        <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+        <nav class="navbar navbar-expand-xl bg-primary" data-bs-theme="dark">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">OnEvent</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,7 +31,7 @@
                             <a class="nav-link" asp-area="EventManagement" asp-controller="Events" asp-action="Index">Event Management</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="EventManagement" asp-controller="Events" asp-action="Create">Create Event</a>
+                            <a class="nav-link" asp-area="GuestManagement" asp-controller="Guest" asp-action="Index">Guest Controller</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
@@ -46,7 +46,7 @@
                     </ul>
                     <form class="d-flex">
                         <input class="form-control me-sm-2" type="search" placeholder="Search" spellcheck="false" data-ms-editor="true">
-                        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+                        <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>
                     </form>
                     <partial name="_LoginPartial" />
                 </div>
@@ -64,9 +64,27 @@
             &copy; 2024 - OnEvent - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    @* Toast message *@
+    <div id="toastContainer"
+         aria-live="polite"
+         aria-atomic="true"
+         style="position: fixed; top: 10px; right: 10px; z-index: 9999;">
+        <partial name="_ToastPartial" />
+    </div>
+    @if (ViewData.ContainsKey("ToastMessage") && !string.IsNullOrEmpty(ViewData["ToastMessage"] as string))
+    {
+        <script>
+            showToast("@ViewData["ToastMessage"]", 
+            "@(string.IsNullOrEmpty(ViewData["ToastHeader"] as string)
+                            ? "Notification"
+            : ViewData["ToastHeader"])");
+        </script>
+    }
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

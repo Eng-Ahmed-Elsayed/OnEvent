@@ -5,12 +5,13 @@ using Models.Models;
 
 namespace OnEvent.MappingProfiles
 {
-    public class EventManagementProfile : Profile
+    public class GeneralProfile : Profile
     {
-        public EventManagementProfile()
+        public GeneralProfile()
         {
             CreateMap<Event, EventDto>().ReverseMap();
             CreateMap<Guest, GuestDto>().ReverseMap();
+            CreateMap<Invitation, InvitationDto>().ReverseMap();
             CreateMap(typeof(PagedList<>), typeof(ViewPagedList<>));
         }
     }

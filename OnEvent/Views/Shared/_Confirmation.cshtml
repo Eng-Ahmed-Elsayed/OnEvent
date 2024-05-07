@@ -11,7 +11,11 @@
         
             </div>
             <div class="modal-footer">
-                <form asp-action="@Model.action" asp-controller="@Model.controller" asp-route-id="@Model.id" method="post">
+                <form asp-action="@Model.action"
+                      asp-controller="@Model.controller"
+                      asp-all-route-data="@Model.allRouteData"
+                      method="post">
+@*                       asp-route-id="@Model.id" *@
                     @Html.AntiForgeryToken()
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-danger">@Model.action</button>

@@ -23,11 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\GuestManagement\Controllers\" />
-    <Folder Include="Areas\GuestManagement\Views\" />
     <Folder Include="Areas\IntegrationAndExternalServices\Controllers\" />
     <Folder Include="Areas\IntegrationAndExternalServices\Views\" />
-    <Folder Include="Areas\InvitationManagement\Views\" />
     <Folder Include="Areas\NotificationAndCommunication\Controllers\" />
     <Folder Include="Areas\NotificationAndCommunication\Views\" />
     <Folder Include="Areas\ReportingAndAnalytics\Controllers\" />

@@ -70,6 +70,13 @@ namespace DataAccess.Data
                 .HasForeignKey<RSVP>(e => e.GuestId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Invitation with Guest
+            modelBuilder.Entity<Invitation>()
+                .HasOne(e => e.Guest)
+                .WithOne(e => e.Invitation)
+                .HasForeignKey<Guest>(e => e.InvitationId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // Notifications with Event
             modelBuilder.Entity<Notification>()
                 .HasOne<Event>()

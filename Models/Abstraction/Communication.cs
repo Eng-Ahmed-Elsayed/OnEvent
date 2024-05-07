@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Models.Interfaces
+namespace Models.Abstraction
 {
     public abstract class Communication
     {
@@ -9,7 +9,7 @@ namespace Models.Interfaces
         [StringLength(800, MinimumLength = 5)]
         public string Subject { get; set; }
         [Required]
-        [StringLength(800)]
+        [StringLength(2000)]
         public string Message { get; set; }
         public DateTime Timestamp { get; set; }
 

@@ -14,6 +14,7 @@ namespace Models.Models
 
         public Guid EventId { get; set; }
         public Event? Event { get; set; }
+        public Guest? Guest { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; }
