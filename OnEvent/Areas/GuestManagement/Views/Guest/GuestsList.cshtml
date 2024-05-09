@@ -49,13 +49,13 @@
                 <th>
                     <a asp-action="GuestsList"
                        class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
-                       asp-route-OrderBy="@(orderBy == "RSVP" ? "RSVP desc" : "RSVP")"
+                       asp-route-OrderBy="@(orderBy == "rsvp" ? "rsvp desc" : "rsvp")"
                        asp-route-searchString="@searchString">RSVP Status</a>
                 </th>
                 <th>
                     <a asp-action="GuestsList"
                        class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
-                       asp-route-OrderBy="@(orderBy == "CreatedAt" ? "CreatedAt desc" : "CreatedAt")"
+                       asp-route-OrderBy="@(orderBy == "createdat" ? "createdat desc" : "createdat")"
                        asp-route-searchString="@searchString">Registration Date</a>
                 </th>
                 <th></th>
@@ -71,15 +71,16 @@
                     <td>@slicedName</td>
                     <td>@item.Email</td>
                     <td>@item.RSVP.RSVPStatus</td>
-                    <td>@item.CreatedAt.ToShortDateString()</td>
+                    <td>@item.CreatedAt.ToLongDateString()</td>
                     <td class="d-flex ">
-                        <a asp-action="Info" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info me-3">Details</a>
+                        <a asp-action="Info" asp-route-guestId="@item.Id" class="btn btn-sm btn-outline-info me-3">Details</a>
                         <a asp-action="EditGuest"
-                           asp-route-id="@item.Id"
                            asp-route-eventId="@item.EventId"
+                           asp-route-guestId="@item.Id"
                            class="btn btn-sm btn-outline-success me-3">Edit</a>
                         <form asp-action="DeleteGuest"
                               asp-route-eventId="@item.EventId"
+                              asp-route-guestId="@item.Id"
                               method="post">
                             @Html.AntiForgeryToken()
                             <button type="submit" class="btn btn-outline-warning"

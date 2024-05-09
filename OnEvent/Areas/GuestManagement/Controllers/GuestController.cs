@@ -362,7 +362,7 @@ namespace OnEvent.Areas.GuestManagement.Controllers
                 TempData["ToastHeader"] = "Register new guest Successfully!";
                 TempData["ToastMessage"] = $"You have registered new guest to {eventObj.Title} successfully!";
                 // Redirect to guests list
-                return RedirectToAction("GuestsList", new { eventId = eventId });
+                return RedirectToAction("GuestsList", new { eventId });
             }
             catch (Exception ex)
             {
@@ -395,11 +395,17 @@ namespace OnEvent.Areas.GuestManagement.Controllers
                 // Search for guests
                 var guests = await _unitOfWork.GuestRepository.GetListAsync(x =>
                 x.EventId == eventId
+                && !x.IsDeleted
                 && (searchString.IsNullOrEmpty() ? true
                 : (x.Name.Contains(searchString)
                     || x.Email.Contains(searchString))),
                 parameters,
                 "RSVP");
+                // Add the parameters to the ViewBag
+                ViewBag.searchString = searchString;
+                ViewBag.orderBy = parameters.OrderBy.IsNullOrEmpty()
+                    ? ""
+                    : parameters.OrderBy.ToLower();
                 // Toast messages if redirected
                 ViewData["ToastHeader"] = TempData["ToastHeader"]?.ToString();
                 ViewData["ToastMessage"] = TempData["ToastMessage"]?.ToString();
@@ -408,6 +414,99 @@ namespace OnEvent.Areas.GuestManagement.Controllers
                 ViewData["EventName"] = eventObj?.Title;
 
                 return View(_mapper.Map<ViewPagedList<GuestDto>>(guests));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return StatusCode(500,
+                    $"The server encountered an unexpected condition. Please try again later.");
+            }
+        }
+
+        // Delete Guest
+        [Route("~/dashboard/events/{eventId:guid}/guests/{guestId:guid}/delete")]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        [ValidateEventOrganizer]
+        [HttpPost]
+        public async Task<IActionResult> DeleteGuest(Guid eventId, Guid guestId)
+        {
+            try
+            {
+                if (guestId == Guid.Empty || eventId == Guid.Empty)
+                {
+                    return BadRequest();
+                }
+                await _unitOfWork.GuestRepository.DeleteAsync(guestId);
+                await _unitOfWork.SaveChangesAsync();
+                TempData["ToastMessage"] = "You have deleted this guest successfully!";
+                return RedirectToAction("GuestsList", new { eventId });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return StatusCode(500,
+                    $"The server encountered an unexpected condition. Please try again later.");
+            }
+        }
+
+        [Route("~/dashboard/events/{eventId:guid}/guests/{guestId:guid}/edit")]
+        [Authorize]
+        [ValidateEventOrganizer]
+        public async Task<IActionResult> EditGuest([FromRoute] Guid eventId, Guid guestId)
+        {
+            try
+            {
+                Guest guest = await _unitOfWork.GuestRepository.GetAsync(x =>
+                x.Id == guestId,
+                "Event,RSVP");
+                if (guest == null)
+                {
+                    return NotFound();
+                }
+                return View("Upsert", _mapper.Map<GuestDto>(guest));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return StatusCode(500,
+                    $"The server encountered an unexpected condition. Please try again later.");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("~/dashboard/events/{eventId:guid}/guests/{guestId:guid}/edit")]
+        [Authorize]
+        [ValidateEventOrganizer]
+        public async Task<IActionResult> EditGuest([FromRoute] Guid eventId,
+            Guid guestId,
+            GuestDto guestDto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    TempData["ToastHeader"] = "Invaild Data";
+                    TempData["ToastMessage"] = "Please enter a vaild data!";
+                    return View("Upsert", guestDto);
+                }
+
+                // Create new guest
+                Guest guest = await _unitOfWork.GuestRepository.GetAsync(x =>
+                x.Id == guestId,
+                "RSVP");
+                // Add guest RSVP
+                guest.Name = guestDto.Name;
+                guest.Email = guestDto.Email;
+                guest.MealPreference = guestDto.MealPreference;
+                guest.UpdateAt = DateTime.Now;
+                // Save
+                await _unitOfWork.SaveChangesAsync();
+                // Add toast message
+                TempData["ToastMessage"] = $"You have updated guest {guest.Email} successfully!";
+                // Redirect to guests list
+                return RedirectToAction("GuestsList", new { eventId });
             }
             catch (Exception ex)
             {

@@ -23,10 +23,11 @@ namespace Models.Validators
         {
             if (value is DateTime date)
             {
-                if (date <= _maxDate && date >= _minDate) return ValidationResult.Success;
+                if (date <= _maxDate && date >= _minDate)
+                    return ValidationResult.Success;
 
             }
-            return new ValidationResult($"Date should be beteen '{_minDate.ToShortDateString()}' and '{_maxDate.ToShortDateString()}'");
+            return new ValidationResult($"Date should be beteen '{_minDate.ToLongDateString()}' and '{_maxDate.ToLongDateString()}'");
         }
     }
 }

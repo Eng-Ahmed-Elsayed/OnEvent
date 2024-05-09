@@ -74,7 +74,7 @@
                 <tr>
                     <td>@item.GuestEmail</td>
                     <td>@item.Status</td>
-                    <td>@item.ResponseDate?.ToShortDateString()</td>
+                    <td>@item.ResponseDate?.ToLongDateString()</td>
                     <td class="d-flex">
                         <a asp-action="Details" asp-route-eventId="@ViewContext.RouteData.Values["eventId"]"
                            asp-route-invitationId="@item.Id" class="btn btn-sm btn-outline-info me-3">Details</a>

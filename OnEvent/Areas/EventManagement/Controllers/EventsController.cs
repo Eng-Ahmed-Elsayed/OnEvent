@@ -9,6 +9,7 @@ using Models.DataTransferObjects;
 using Models.Models;
 using Utility.FileManager;
 using Utility.Text;
+using Utility.Validatiors;
 
 namespace OnEvent.Areas.EventManagement.Controllers
 {
@@ -165,6 +166,7 @@ namespace OnEvent.Areas.EventManagement.Controllers
                 // Add new event then save
                 await _unitOfWork.EventRepository.InsertAsync(eventObj);
                 await _unitOfWork.SaveChangesAsync();
+                TempData["ToastMessage"] = "You have created new event successfully!";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -234,8 +236,8 @@ namespace OnEvent.Areas.EventManagement.Controllers
                     eventObj.Logistics.TransportationArrangements = eventDto.Logistics.TransportationArrangements;
                     eventObj.UpdateAt = DateTime.UtcNow;
 
-                    await _unitOfWork.EventRepository.UpdateAsync(eventObj);
                     await _unitOfWork.SaveChangesAsync();
+                    TempData["ToastMessage"] = $"You have updated {eventObj.Title} event successfully!";
                     return RedirectToAction(nameof(Index));
                 }
                 return View("Upsert", eventDto);
@@ -251,20 +253,19 @@ namespace OnEvent.Areas.EventManagement.Controllers
         // POST: dashboard/events/{id}/Delete/
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ValidateEventOrganizer]
         [Route("{id:guid}/delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
-                if (id == null || id == Guid.Empty)
+                if (id == Guid.Empty)
                 {
                     return BadRequest();
                 }
                 // Get the organizer
-                var organizer = await _userManager.FindByEmailAsync(User.Identity.Name);
                 var eventObj = await _unitOfWork.EventRepository.GetAsync(x => x.Id == id
-                    && !x.IsDeleted
-                    && x.OrganizerId == organizer.Id);
+                    && !x.IsDeleted);
                 if (eventObj != null)
                 {
                     if (eventObj.ImgPath != null)
@@ -273,6 +274,7 @@ namespace OnEvent.Areas.EventManagement.Controllers
                     }
                     await _unitOfWork.EventRepository.DeleteAsync(eventObj.Id);
                     await _unitOfWork.SaveChangesAsync();
+                    TempData["ToastMessage"] = "You have deleted this event successfully!";
                 }
                 return RedirectToAction(nameof(Index));
             }
