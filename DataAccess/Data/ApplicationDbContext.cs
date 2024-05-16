@@ -41,7 +41,6 @@ namespace DataAccess.Data
                 .HasForeignKey(e => e.EventId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-
             // Event with Guests
             modelBuilder.Entity<Event>()
                 .HasMany(e => e.Guests)
@@ -102,6 +101,13 @@ namespace DataAccess.Data
             modelBuilder.Entity<EmailCraft>()
                 .HasOne(e => e.User)
                 .WithMany(e => e.EmailModels)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Guests with User
+            modelBuilder.Entity<User>()
+                .HasMany(e => e.Guests)
+                .WithOne()
                 .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
         }

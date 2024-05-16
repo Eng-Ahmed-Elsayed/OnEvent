@@ -24,7 +24,7 @@ namespace Utility.Communication.MailTemplates
 
                                 Your expertise and insights would be invaluable to our discussions. Please let us know if you can attend by {eventObj.Date}.
 
-                                You can confirm your attendance by visiting https://localhost:7132/guests/GuestRegistration/{invitationId}.
+                                You can confirm your attendance by visiting https://localhost:7132/guests/registration/{invitationId}.
 
                                 If you have any questions or need further information, feel free to contact me directly at [OnEvent Help Link].
 

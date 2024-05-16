@@ -19,7 +19,7 @@ namespace Models.Models
         public RSVP? RSVP { get; set; }
         public Guid? InvitationId { get; set; }
         public Invitation? Invitation { get; set; }
-
+        public string? UserId { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; }

@@ -20,6 +20,7 @@ namespace Models.DataTransferObjects
         public RSVP? RSVP { get; set; }
         public Guid? InvitationId { get; set; }
         public InvitationDto? Invitation { get; set; }
+        public string? UserId { get; set; }
 
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdateAt { get; set; }

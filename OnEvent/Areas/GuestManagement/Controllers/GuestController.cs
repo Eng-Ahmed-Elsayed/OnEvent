@@ -53,15 +53,17 @@ namespace OnEvent.Areas.GuestManagement.Controllers
             return View();
         }
 
-
+        #region Guest Actions
         [Route("registration/{invitationId:guid}")]
         public async Task<IActionResult> GuestRegistration([FromRoute] Guid invitationId)
         {
             try
             {
+                var user = await _userManager.FindByEmailAsync(User.Identity.Name ?? "");
                 var invitation = await _unitOfWork.InvitationRepository.GetAsync(
                     x => x.Id == invitationId,
                     "Event");
+                // If no invitation
                 if (invitation == null)
                 {
                     TempData["ToastHeader"] = "Invaild Invitation";
@@ -69,6 +71,14 @@ namespace OnEvent.Areas.GuestManagement.Controllers
                     return NotFound();
                 }
 
+                // If the user is the organizer redirect him to AddGuest action.
+                if (user?.Id == invitation.Event.OrganizerId)
+                {
+                    return RedirectToAction("AddGuest", new
+                    {
+                        eventId = invitation.EventId
+                    });
+                }
                 Guest guest = await _unitOfWork.GuestRepository.GetAsync(x => x.InvitationId == invitationId);
                 if (guest != null)
                 {
@@ -81,7 +91,9 @@ namespace OnEvent.Areas.GuestManagement.Controllers
                     Email = invitation.GuestEmail,
                     InvitationId = invitationId,
                     Event = _mapper.Map<EventDto>(invitation.Event),
+                    UserId = user?.Id,
                 };
+                ViewBag.isOrganizer = false;
                 return View("Upsert", guestDto);
             }
             catch (Exception ex)
@@ -91,7 +103,6 @@ namespace OnEvent.Areas.GuestManagement.Controllers
             }
         }
 
-
         [Route("registration/{id:guid}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -99,9 +110,18 @@ namespace OnEvent.Areas.GuestManagement.Controllers
         {
             try
             {
+                var user = await _userManager.FindByEmailAsync(User.Identity.Name ?? "");
                 var invitation = await _unitOfWork.InvitationRepository.GetAsync(
                     x => x.Id == id,
                     "Event");
+                // If the user is the organizer redirect him to AddGuest action.
+                if (user?.Id == invitation.Event.OrganizerId)
+                {
+                    return RedirectToAction("AddGuest", new
+                    {
+                        eventId = invitation.EventId
+                    });
+                }
                 // If no invitation
                 if (invitation != null)
                 {
@@ -130,6 +150,12 @@ namespace OnEvent.Areas.GuestManagement.Controllers
                 guest.InvitationId = id;
                 guest.Event = invitation.Event;
                 guest.CreatedAt = DateTime.Now;
+                // If user
+                if (user != null)
+                {
+                    guest.UserId = user.Id;
+                    guest.Email = user.Email;
+                }
                 // Create new RSVP
                 RSVP _RSVP = new()
                 {
@@ -179,18 +205,15 @@ namespace OnEvent.Areas.GuestManagement.Controllers
 
         [Route("{id:guid}/edit")]
         [HttpGet]
+        [GuestAuthorization]
         public async Task<IActionResult> EditInfo([FromRoute] Guid id)
         {
             try
             {
-                Guest guest = await _unitOfWork.GuestRepository.GetAsync(x =>
-                x.Id == id,
-                "Event,RSVP");
-                if (guest == null)
-                {
-                    return NotFound();
-                }
+                var guest = await _unitOfWork.GuestRepository.GetAsync(x => x.Id == id, "Event,RSVP");
+                ViewBag.isOrganizer = false;
                 return View("Upsert", _mapper.Map<GuestDto>(guest));
+
             }
             catch (Exception ex)
             {
@@ -202,6 +225,7 @@ namespace OnEvent.Areas.GuestManagement.Controllers
         [Route("{id:guid}/edit")]
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [GuestAuthorization]
         public async Task<IActionResult> EditInfo([FromRoute] Guid id, GuestDto guestDto)
         {
             try
@@ -219,6 +243,12 @@ namespace OnEvent.Areas.GuestManagement.Controllers
                 if (guest == null)
                 {
                     return NotFound();
+                }
+                var user = await _userManager.FindByEmailAsync(User.Identity.Name ?? "");
+                // If logged in and the guest does not have a user link it to this user
+                if (user != null && guest.UserId.IsNullOrEmpty())
+                {
+                    guest.UserId = user.Id;
                 }
                 // Update fields
                 guest.Name = guestDto.Name;
@@ -267,11 +297,9 @@ namespace OnEvent.Areas.GuestManagement.Controllers
                     $"The server encountered an unexpected condition. Please try again later.");
             }
         }
+        #endregion
 
-        /// <summary>
-        /// Actions for the organizer
-        /// </summary>
-
+        #region Organizer Manage Guests
         // Organizer add guest manually
         [Route("~/dashboard/events/{eventId:guid}/guests/add")]
         [Authorize]
@@ -286,6 +314,7 @@ namespace OnEvent.Areas.GuestManagement.Controllers
                     EventId = eventId,
                     Event = _mapper.Map<EventDto>(eventObj)
                 };
+                ViewBag.isOrganizer = true;
                 return View("Upsert", guestDto);
             }
             catch (Exception ex)
@@ -464,6 +493,7 @@ namespace OnEvent.Areas.GuestManagement.Controllers
                 {
                     return NotFound();
                 }
+                ViewBag.isOrganizer = true;
                 return View("Upsert", _mapper.Map<GuestDto>(guest));
             }
             catch (Exception ex)
@@ -515,5 +545,6 @@ namespace OnEvent.Areas.GuestManagement.Controllers
                     $"The server encountered an unexpected condition. Please try again later.");
             }
         }
+        #endregion
     }
 }

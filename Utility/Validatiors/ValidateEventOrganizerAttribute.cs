@@ -6,6 +6,10 @@ using Models.Models;
 
 namespace Utility.Validatiors
 {
+    /// <summary>
+    /// Validate if the event organizer is the user 
+    /// and if there is an event for this user with this id.
+    /// </summary>
     public class ValidateEventOrganizerAttribute : TypeFilterAttribute
     {
         public ValidateEventOrganizerAttribute() : base(typeof(ValidateEventOrganizeFilterImpl))
@@ -24,13 +28,6 @@ namespace Utility.Validatiors
                 _userManager = userManager;
             }
 
-            /// <summary>
-            /// Validate if the event organizer is the user 
-            /// and if there is an event for this user with this id.
-            /// </summary>
-            /// <param name="context"></param>
-            /// <param name="next"></param>
-            /// <returns></returns>
             public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
             {
                 if (context.ActionArguments.TryGetValue("eventId", out object eventIdObject) && eventIdObject is Guid eventId)
