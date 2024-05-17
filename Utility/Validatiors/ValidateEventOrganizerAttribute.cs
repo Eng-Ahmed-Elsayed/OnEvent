@@ -34,16 +34,16 @@ namespace Utility.Validatiors
                 {
                     // Get the organizer
                     var organizer = await _userManager.FindByEmailAsync(context.HttpContext.User.Identity.Name);
-                    if (organizer == null)
-                    {
-                        context.Result = new UnauthorizedResult();
-                    }
                     var eventExists = await _unitOfWork.EventRepository.GetAsync(e => e.Id == eventId
-                                        && !e.IsDeleted
-                                        && e.OrganizerId == organizer.Id);
+                                        && !e.IsDeleted);
                     if (eventExists == null)
                     {
                         context.Result = new NotFoundResult();
+                        return;
+                    }
+                    if (organizer == null || eventExists.OrganizerId != organizer.Id)
+                    {
+                        context.Result = new UnauthorizedResult();
                         return;
                     }
                 }
@@ -52,7 +52,6 @@ namespace Utility.Validatiors
                     context.Result = new BadRequestResult();
                     return;
                 }
-
                 await next();
             }
         }
