@@ -1,6 +1,8 @@
 ﻿@model ViewPagedList<GuestDto>
 
 @{
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    bool isOrganizer = action == "GuestsList";
     string eventName = ViewBag.EventName;
     ViewBag.Title = $"{eventName} Guests List";
     string searchString = ViewBag.searchString;
@@ -8,16 +10,18 @@
 }
 
 <div class="container pt-3">
-    <h1> @eventName Event Guests List</h1>
-
     <div class="d-flex justify-content-between">
-        <span>
-            <a asp-action="AddGuest"
-               asp-route-eventId="@ViewContext.RouteData.Values["eventId"]"
-               class="btn btn-outline-primary">Add New Guest</a>
-        </span>
+        <h1>@(isOrganizer ? eventName + "Event " : "Your ")Guests List</h1>
+        @if (isOrganizer)
+        {
+            <span>
+                <a asp-action="AddGuest"
+                   asp-route-eventId="@ViewContext.RouteData.Values["eventId"]"
+                   class="btn btn-outline-primary">Add New Guest</a>
+            </span>
+        }
         @* Search *@
-        <form asp-action="GuestsList" method="get">
+        <form asp-action="@action" method="get">
             <div class="input-group mb-3">
                 <input type="text"
                        name="searchString"
@@ -35,29 +39,38 @@
         <thead>
             <tr>
                 <th>
-                    <a asp-action="GuestsList"
+                    <a asp-action="@action"
                        class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
                        asp-route-OrderBy="@(orderBy == "name" ? "name desc" : "name")"
                        asp-route-searchString="@searchString">Name</a>
                 </th>
                 <th>
-                    <a asp-action="GuestsList"
+                    <a asp-action="@action"
                        class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
                        asp-route-OrderBy="@(orderBy == "email" ? "email desc" : "email")"
                        asp-route-searchString="@searchString">Email</a>
                 </th>
                 <th>
-                    <a asp-action="GuestsList"
+                    <a asp-action="@action"
                        class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
                        asp-route-OrderBy="@(orderBy == "rsvp" ? "rsvp desc" : "rsvp")"
                        asp-route-searchString="@searchString">RSVP Status</a>
                 </th>
                 <th>
-                    <a asp-action="GuestsList"
+                    <a asp-action="@action"
                        class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
                        asp-route-OrderBy="@(orderBy == "createdat" ? "createdat desc" : "createdat")"
                        asp-route-searchString="@searchString">Registration Date</a>
                 </th>
+                @if (!isOrganizer)
+                {
+                    <th>
+                        <a asp-action="@action"
+                           class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+                           asp-route-OrderBy="@(orderBy == "event" ? "event desc" : "event")"
+                           asp-route-searchString="@searchString">Event</a>
+                    </th>
+                }
                 <th></th>
             </tr>
         </thead>
@@ -72,24 +85,43 @@
                     <td>@item.Email</td>
                     <td>@item.RSVP.RSVPStatus</td>
                     <td>@item.CreatedAt.ToLongDateString()</td>
+                    @if (!isOrganizer)
+                    {
+                        <th>
+                            <a asp-area="EventManagement"
+                               asp-controller="Events"
+                               asp-action="Details"
+                               asp-route-id="@item.EventId"
+                               class="link-info link-underline-opacity-0">@item.Event.Title</a>
+                        </th>
+                    }
                     <td class="d-flex ">
                         <a asp-action="Info" asp-route-guestId="@item.Id" class="btn btn-sm btn-outline-info me-3">Details</a>
-                        <a asp-action="EditGuest"
-                           asp-route-eventId="@item.EventId"
-                           asp-route-guestId="@item.Id"
-                           class="btn btn-sm btn-outline-success me-3">Edit</a>
-                        <form asp-action="DeleteGuest"
-                              asp-route-eventId="@item.EventId"
-                              asp-route-guestId="@item.Id"
-                              method="post">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-outline-warning"
-                                    onclick="return confirm('Are you sure you want to send a delete @item.Email?')">
-                                Delete
-                            </button>
-                        </form>
+                        @if (!isOrganizer)
+                        {
+                            <a asp-action="EditInfo"
+                               asp-route-id="@item.Id"
+                               class="btn btn-sm btn-outline-success me-3">Edit</a>
+                        }
+                        @if (isOrganizer)
+                        {
+                            <a asp-action="EditGuest"
+                               asp-route-eventId="@item.EventId"
+                               asp-route-guestId="@item.Id"
+                               class="btn btn-sm btn-outline-success me-3">Edit</a>
+                            <form asp-action="DeleteGuest"
+                                  asp-route-eventId="@item.EventId"
+                                  asp-route-guestId="@item.Id"
+                                  method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-warning"
+                                        onclick="return confirm('Are you sure you want to send a delete @item.Email?')">
+                                    Delete
+                                </button>
+                            </form>
+                        }
                     </td>
-                    
+
                 </tr>
             }
         </tbody>
@@ -102,7 +134,7 @@
                 var nextDisabled = !Model.HasNext ? "disabled" : "";
             }
             <li class="page-item @prevDisabled">
-                <a class="page-link" asp-action="GuestsList"
+                <a class="page-link" asp-action="@action"
                    asp-route-searchString="@searchString"
                    asp-route-orderBy="@orderBy"
                    asp-route-PageNumber="@(Model.CurrentPage - 1)"
@@ -114,7 +146,7 @@
             {
                 <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
                     <a class="page-link"
-                       asp-action="GuestsList"
+                       asp-action="@action"
                        asp-route-searchString="@searchString"
                        asp-route-orderBy="@orderBy"
                        asp-route-PageNumber="@i">@i</a>
@@ -122,7 +154,7 @@
             }
             <li class="page-item @nextDisabled">
                 <a class="page-link"
-                   asp-action="GuestsList"
+                   asp-action="@action"
                    asp-route-searchString="@searchString"
                    asp-route-orderBy="@orderBy"
                    asp-route-PageNumber="@(Model.CurrentPage + 1)"
