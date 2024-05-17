@@ -45,15 +45,55 @@ namespace OnEvent.Areas.GuestManagement.Controllers
             _mailTemplate = mailTemplate;
         }
 
-        public IActionResult Index()
-        {
-
-            //ViewData["ToastHeader"] = "Its the toast header";
-            //ViewData["ToastMessage"] = "You have been redirected successfully!";
-            return View();
-        }
 
         #region Guest Actions
+
+        [Authorize]
+        public async Task<IActionResult> Index([FromQuery] Parameters? parameters,
+            string? searchString)
+        {
+
+            try
+            {
+                // Add default parameters
+                if (parameters == null)
+                {
+                    parameters = new Parameters()
+                    {
+                        OrderBy = "name",
+                        PageNumber = 1,
+                        PageSize = 5,
+                    };
+                }
+                var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+                // Search for the guests
+                var guests = await _unitOfWork.GuestRepository.GetListAsync(x =>
+                x.UserId == user.Id
+                && !x.IsDeleted
+                && (searchString.IsNullOrEmpty() ? true
+                : (x.Name.Contains(searchString)
+                    || x.Email.Contains(searchString)
+                    || x.Event.Title.Contains(searchString))),
+                parameters,
+                "RSVP,Event");
+                // Add the parameters to the ViewBag
+                ViewBag.searchString = searchString;
+                ViewBag.orderBy = parameters.OrderBy.IsNullOrEmpty()
+                    ? ""
+                    : parameters.OrderBy.ToLower();
+                // Toast messages if redirected
+                ViewData["ToastHeader"] = TempData["ToastHeader"]?.ToString();
+                ViewData["ToastMessage"] = TempData["ToastMessage"]?.ToString();
+                return View("GuestsList", _mapper.Map<ViewPagedList<GuestDto>>(guests));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return StatusCode(500,
+                    $"The server encountered an unexpected condition. Please try again later.");
+            }
+        }
+
         [Route("registration/{invitationId:guid}")]
         public async Task<IActionResult> GuestRegistration([FromRoute] Guid invitationId)
         {
@@ -299,7 +339,7 @@ namespace OnEvent.Areas.GuestManagement.Controllers
         }
         #endregion
 
-        #region Organizer Manage Guests
+        #region Organizer Manage Guests Actions
         // Organizer add guest manually
         [Route("~/dashboard/events/{eventId:guid}/guests/add")]
         [Authorize]
