@@ -86,12 +86,9 @@ namespace OnEvent.Areas.EventManagement.Controllers
         {
             try
             {
-                // Get the organizer
-                var organizer = await _userManager.FindByEmailAsync(User.Identity.Name);
                 // Get the event if it is not null return it, else redirect
                 var eventObj = await _unitOfWork.EventRepository.GetAsync(x => x.Id == id
-                                    && !x.IsDeleted
-                                    && x.OrganizerId == organizer.Id,
+                                    && !x.IsDeleted,
                     "Invitations,Guests,Logistics");
                 ViewData["ToastHeader"] = TempData["ToastHeader"]?.ToString();
                 ViewData["ToastMessage"] = TempData["ToastMessage"]?.ToString();
