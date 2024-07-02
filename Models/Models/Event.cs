@@ -22,6 +22,8 @@ namespace Models.Models
         [StringLength(800, MinimumLength = 5)]
         // Full description to the event
         public string Description { get; set; }
+        [Required]
+        public CategoryOptions Category { get; set; }
 
         [Required]
         [DataType(DataType.Date)]

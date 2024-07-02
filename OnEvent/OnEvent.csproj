@@ -27,8 +27,7 @@
     <Folder Include="Areas\IntegrationAndExternalServices\Views\" />
     <Folder Include="Areas\NotificationAndCommunication\Controllers\" />
     <Folder Include="Areas\NotificationAndCommunication\Views\" />
-    <Folder Include="Areas\ReportingAndAnalytics\Controllers\" />
-    <Folder Include="Areas\ReportingAndAnalytics\Views\" />
+    <Folder Include="wwwroot\vendor\" />
     <Folder Include="wwwroot\UploadedFiles\Events\" />
   </ItemGroup>
 

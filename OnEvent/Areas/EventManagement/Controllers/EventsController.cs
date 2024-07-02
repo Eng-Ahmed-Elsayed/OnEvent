@@ -145,6 +145,7 @@ namespace OnEvent.Areas.EventManagement.Controllers
                     Id = Guid.NewGuid(),
                     Organizer = organizer,
                     Title = StringGlobalization.ToTitleCase(eventDto.Title),
+                    Category = eventDto.Category,
                     Brief = eventDto.Brief,
                     Agenda = eventDto.Agenda,
                     Description = eventDto.Description,
@@ -175,6 +176,7 @@ namespace OnEvent.Areas.EventManagement.Controllers
 
         // GET: dashboard/events/{id}/Edit
         [Route("{id:guid}/edit")]
+        [ValidateEventOrganizer]
         public async Task<IActionResult> Edit(Guid id)
         {
 
@@ -196,6 +198,7 @@ namespace OnEvent.Areas.EventManagement.Controllers
         // POST: dashboard/events/{id}/Edit/
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ValidateEventOrganizer]
         [Route("{id:guid}/edit")]
         public async Task<IActionResult> Edit(Guid id, EventDto eventDto)
         {
@@ -210,8 +213,8 @@ namespace OnEvent.Areas.EventManagement.Controllers
                 var organizer = await _userManager.FindByEmailAsync(User.Identity.Name);
                 // Get the event if it is not null update the redirect, else return to the same view 
                 // with the eventObj
-                Event eventObj = await _unitOfWork.EventRepository.GetAsync(x => x.Id == eventDto.Id
-                    && x.OrganizerId == organizer.Id,
+                Event eventObj = await _unitOfWork.EventRepository.GetAsync(x =>
+                x.Id == eventDto.Id,
                     "Logistics");
                 if (eventObj != null)
                 {
@@ -223,7 +226,10 @@ namespace OnEvent.Areas.EventManagement.Controllers
                                         "Events");
                     }
                     eventObj.Title = StringGlobalization.ToTitleCase(eventDto.Title);
+                    eventObj.Category = eventDto.Category;
                     eventObj.Description = eventDto.Description;
+                    eventObj.Brief = eventDto.Brief;
+                    eventObj.Agenda = eventDto.Agenda;
                     eventObj.Date = eventDto.Date;
                     eventObj.Time = eventDto.Time;
                     eventObj.Location = StringGlobalization.ToTitleCase(eventDto.Location);

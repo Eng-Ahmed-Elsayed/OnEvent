@@ -49,6 +49,7 @@ namespace OnEvent.Areas.GuestManagement.Controllers
         #region Guest Actions
 
         [Authorize]
+        [Route("~/dashboard/guests")]
         public async Task<IActionResult> Index([FromQuery] Parameters? parameters,
             string? searchString)
         {

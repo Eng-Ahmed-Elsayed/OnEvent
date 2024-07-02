@@ -3,28 +3,91 @@
 @{
     ViewBag.Title = Model.Title;
 }
-
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">@Model.Title</h3>
-                </div>
+<style>
+    .container-dark-gray {
+        padding: 3rem;
+    }
+    .card-gray {
+        padding:1rem;
+    }
+</style>
+<div class="row">
+    <div class="container-dark-gray ">
+        <div class="card card-gray bg-gradient-dark mb-4">
+        <div class="row g-0">
+            <div class="col-lg-5 p-2">
+                @if (!string.IsNullOrEmpty(Model.ImgPath))
+                {
+                    <img src="~/@Model.ImgPath" class="img-fluid rounded-start" alt="Event Image">
+                }
+            </div>
+            <div class="col-lg-7">
                 <div class="card-body">
-                    <p>@Model.Description</p>
-                    <p>Date: @Model.Date.ToString("yyyy-MM-dd")</p>
-                    <p>Location: @Model.Location</p>
-                    <!-- Display the event image -->
-                    @if (!string.IsNullOrEmpty(Model.ImgPath))
-                    {
-                        <img src="~/@Model.ImgPath" alt="Event Image" class="img-fluid">
-                    }
+                    <h1 class="card-title">@Model.Title</h1>
+                    <p class="card-text"><strong>Date:</strong> @Model.Date.ToString("yyyy-MM-dd")</p>
+                    <p class="card-text"><strong>Time:</strong> @Model.Time.ToString(@"hh\:mm")</p>
+                    <p class="card-text"><strong>Location:</strong> @Model.Location</p>
+                    <p class="card-text"><strong>Location Type:</strong> @Model.LocationType</p>
+                    <p class="card-text"><strong>Brief:</strong> @Model.Brief</p>
+                    <a href="@Url.Action("Edit", "Events", new { id = Model.Id })" class="btn btn-primary">Edit Event</a>
+                    <a href="@Url.Action("Index", "Events")" class="btn btn-secondary">Back to Events</a>
                 </div>
-                <div class="card-footer">
-                    <a href="#" class="btn btn-primary">RSVP</a>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Event Details Section -->
+    <div class="event-details container-dark-gray">
+        <div class="card card-gray bg-gradient-dark p-4">
+            <h2 class="text-center mb-4">Event Overview</h2>
+            <p>@Model.Description</p>
+        </div>
+    </div>
+
+    <!-- Additional Event Information -->
+    <div class="additional-info container-dark-gray mt-5">
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card card-gray bg-gradient-dark text-light h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Event Agenda</h5>
+                        <p class="card-text">@Model.Agenda</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card card-gray bg-gradient-dark text-light h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Location Details</h5>
+                        <p class="card-text">@Model.Location</p>
+                        <p class="card-text"><strong>Type:</strong> @Model.LocationType</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@* <div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">@Model.Title</h3>
+            </div>
+            <div class="card-body">
+                <p>@Model.Description</p>
+                <p>Date: @Model.Date.ToString("yyyy-MM-dd")</p>
+                <p>Location: @Model.Location</p>
+                <!-- Display the event image -->
+                @if (!string.IsNullOrEmpty(Model.ImgPath))
+                {
+                    <img src="~/@Model.ImgPath" alt="Event Image" class="img-fluid">
+                }
+            </div>
+            <div class="card-footer">
+                <a href="#" class="btn btn-primary">RSVP</a>
+            </div>
+        </div>
+    </div>
+</div> *@

@@ -1,22 +1,121 @@
 html {
-  font-size: 14px;
+  margin: 0;
+  padding: 0;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
+/* Banner Section */
+.banner-container {
+  position: relative;
+  text-align: center;
+  padding: 50px 0;
+  background: linear-gradient(135deg, #ff4081 0%, #651fff 100%);
+  border-radius: 8px;
+  margin: 20px;
+}
+
+.banner-container h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.banner-container p {
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: #dddddd;
+}
+
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  z-index: 1;
+}
+
+.banner-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* Home containers & cards */
+.container-dark,
+.container-dark-gray {
+  color: #ffffff;
+  border-radius: 8px;
+  margin-top: 20px;
+  padding: 3rem 20px;
+
+  h1 {
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  .card-gray {
+    background-color: #3a3a3a;
+    border: none;
+    border-radius: 8px;
+    transition: transform 0.2s;
+    height: 100%;
+  }
+
+  .card-gray:hover {
+    transform: scale(1.05);
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .card-text {
+    font-size: 1rem;
+    color: #dddddd;
+  }
+
+  .card-img-top {
+    border-radius: 0.5rem 0.5rem 0 0;
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.container-dark {
+  background-color: #1e1e1e;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+.container-dark-gray {
+  background-color: #2c2c2c;
 }
 
-body {
-  margin-bottom: 60px;
+/* Categories Section */
+.category-container {
+  .card-img {
+    height: 22ex;
+    border-radius: 0.5rem;
+  }
+
+  h3 {
+    margin: 0.5rem 1rem;
+  }
+}
+
+/* Contact Section */
+.contact input,
+.contact textarea {
+  background-color: #3a3a3a;
+  border: none;
+  color: #ffffff;
+}
+
+.contact input::placeholder,
+.contact textarea::placeholder {
+  color: #aaaaaa;
 }

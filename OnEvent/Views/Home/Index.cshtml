@@ -1,8 +1,264 @@
-﻿@{
+﻿@model ViewPagedList<EventDto>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row">
+    <div class="col-12">
+        @* Banner section *@
+        <div class="banner-container">
+            <div class="banner-overlay"></div>
+            <div class="banner-content">
+                <h1>Welcome to Event Management</h1>
+                <p>Manage your events seamlessly with our advanced tools and features.</p>
+                <a href="#get-started" class="btn btn-primary">Get Started</a>
+            </div>
+        </div>
+    </div>
+    <!-- Features section -->
+    <div class="col-12">
+        <div class="container-dark">
+        <h2 class="text-center mb-5">Features</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card card-gray">
+                    <img src="~/img/features/feature-5.png" class="card-img-top" alt="Feature 1">
+                    <div class="card-body">
+                        <h5 class="card-title">Easy Event Creation</h5>
+                        <p class="card-text">
+                            Create events effortlessly with our user-friendly interface. Plan,
+                            organize, and manage all event details in one place.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card card-gray">
+                    <img src="~/img/features/feature-2.jpg" class="card-img-top" alt="Feature 2">
+                    <div class="card-body">
+                        <h5 class="card-title">Customizable Templates</h5>
+                        <p class="card-text">
+                            Utilize our customizable templates to design stunning event pages and
+                            invitations that captivate your audience.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card card-gray">
+                    <img src="~/img/features/feature-3.jpg" class="card-img-top" alt="Feature 3">
+                    <div class="card-body">
+                        <h5 class="card-title">Real-time Analytics</h5>
+                        <p class="card-text">
+                            Monitor event performance with real-time analytics. Track registrations,
+                            attendee engagement, and more.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- Upcoming Events section -->
+    <div class="col-12">
+        <div class="container-dark-gray ">
+            <h2 class="text-center">Upcoming Events</h2>
+            <div class="row">
+                @foreach (var eventObj in Model.items)
+                {
+
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card card-gray">
+                            @if (!string.IsNullOrEmpty(eventObj.ImgPath))
+                            {
+                                <a href="@Url.Action("Details", "Events", new { area="EventManagement", id = eventObj.Id })">
+                                    <img src="@Url.Content(eventObj.ImgPath)" class="card-img-top" alt="@eventObj.Title">
+                                </a>
+                            }
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                @{
+                                    string slicedTitle = eventObj.Title.Length > 15 ? eventObj.Title.Substring(0, 15) + "..." :
+                                    eventObj.Title;
+                                    string slicedBrief = eventObj.Brief.Length > 15 ? eventObj.Brief.Substring(0, 15) + "..." :
+                                    eventObj.Brief;
+                                    string slicedLocation = eventObj.Location.Length > 15 ? eventObj.Location.Substring(0, 15) +
+                                    "..." : eventObj.Location;
+                                }
+                                <span class="d-flex justify-content-between align-items-center">
+                                    <a href="@Url.Action("Details", "Events", new { area="EventManagement", id = eventObj.Id })"
+                                       class="card-title link-underline link-underline-opacity-0 m-0">
+                                        @slicedTitle
+                                    </a>
+                                    <a href="#!" class="btn btn-sm btn-secondary rounded-pill">
+                                        @eventObj.Category
+                                    </a>
+                                </span>
+                                <p class="card-text mt-1 mb-2">@slicedBrief</p>
+                                <div class="d-flex justify-content-between align-items-end">
+                                    <p class="card-text mb-0">
+                                        <small class="text-muted">
+                                            <i class="fas fa-map-marker-alt me-1"></i>@slicedLocation
+                                        </small>
+                                    </p>
+                                    <p class="card-text mb-0">
+                                        <small class="text-muted">
+                                            @eventObj.Date.ToString("yyyy-MM-dd") at
+                                            @eventObj.Time.ToString(@"hh\:mm")
+                                        </small>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <!-- Event Categories section -->
+    <div class="col-12">
+        <div class="container-dark category-container ">
+            <h2 class="text-center">Event Categories</h2>
+            <div class="row">
+                <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card card-gray">
+                        <a href="#!">
+                            <img src="~/img/categories/Community.jpg" class="card-img" alt="@CategoryOptions.Community">
+                             <div class="card-img-overlay">
+                                <h3 class="card-title">@CategoryOptions.Community</h3>
+                             </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card card-gray">
+                        <a href="#!">
+                            <img src="~/img/categories/Corporate.jpg" class="card-img" alt="@CategoryOptions.Corporate">
+                            <div class="card-img-overlay">
+                                <h3 class="card-title">@CategoryOptions.Corporate</h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card card-gray">
+                        <a href="#!">
+                            <img src="~/img/categories/Educational.jpg" class="card-img" alt="@CategoryOptions.Educational">
+                            <div class="card-img-overlay">
+                                <h3 class="card-title">@CategoryOptions.Educational</h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card card-gray">
+                        <a href="#!">
+                            <img src="~/img/categories/Entertainment.jpg" class="card-img" alt="@CategoryOptions.Entertainment">
+                            <div class="card-img-overlay">
+                                <h3 class="card-title">@CategoryOptions.Entertainment</h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card card-gray">
+                        <a href="#!">
+                            <img src="~/img/categories/General.jpg" class="card-img" alt="@CategoryOptions.General">
+                            <div class="card-img-overlay">
+                                <h3 class="card-title">@CategoryOptions.General</h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card card-gray">
+                        <a href="#!">
+                            <img src="~/img/categories/Social.jpeg" class="card-img" alt="@CategoryOptions.Social">
+                            <div class="card-img-overlay">
+                                <h3 class="card-title">@CategoryOptions.Social</h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card card-gray">
+                        <a href="#!">
+                            <img src="~/img/categories/Sports.jpg" class="card-img" alt="@CategoryOptions.Sports">
+                            <div class="card-img-overlay">
+                                <h3 class="card-title">@CategoryOptions.Sports</h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card card-gray">
+                        <a href="#!">
+                            <img src="~/img/categories/Virtual.jpg" class="card-img" alt="@CategoryOptions.Virtual">
+                            <div class="card-img-overlay">
+                                <h3 class="card-title">@CategoryOptions.Virtual</h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testimonials section -->
+    <div class="col-12">
+        <div class="container-dark-gray">
+            <h2 class="text-center mb-5">Testimonials</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card card-gray">
+                        <img src="~/img/testimonials/person-1.jpg" class="card-img-top" alt="User 1">
+                        <div class="card-body">
+                            <p class="card-text">"This app is amazing! It has helped me manage my events effortlessly."</p>
+                            <p class="card-text"><small class="text-muted">- Ethan Roberts</small></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card card-gray">
+                        <img src="~/img/testimonials/person-2.jpg" class="card-img-top" alt="User 2">
+                        <div class="card-body">
+                            <p class="card-text">"I love the user-friendly interface and the powerful features."</p>
+                            <p class="card-text"><small class="text-muted">- Jacob Thompson</small></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card card-gray">
+                        <img src="~/img/testimonials/person-3.jpg" class="card-img-top" alt="User 3">
+                        <div class="card-body">
+                            <p class="card-text">"Highly recommend this app to anyone organizing events."</p>
+                            <p class="card-text"><small class="text-muted">- Liam Mitchell</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact section -->
+    <div class="col-12">
+        <div class="contact container-dark">
+            <h2 class="text-center">Contact Us</h2>
+            <form class="text-center">
+                <div class="mb-3">
+                    <input type="email" class="form-control" placeholder="Your Email">
+                </div>
+                <div class="mb-3">
+                    <textarea class="form-control" rows="4" placeholder="Your Message"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
+        </div>
+    </div>
 </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js/banner.js"></script>
+}

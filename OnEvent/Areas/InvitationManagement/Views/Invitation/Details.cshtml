@@ -4,28 +4,25 @@
     ViewBag.Title = "Invitation Detatils";
 }
 
-<div class="container">
-    <div class="row align-items-center" style="height:60vh">
-        <div class="col-md-8 offset-md-2">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Invitation Details</h3>
-                </div>
-                <div class="card-body">
-                    <h4>Guest Email: @Model.GuestEmail</h4>
-                    <h4>Ivnitation Status: @Model.Status</h4>
-                    @if (Model.Status == InvitationStatus.Accepted)
-                    {
-                        <h4>Response Date: @Model.ResponseDate?.ToString("yyyy-MM-dd")</h4>
-                    }
-                    <h4>Event: @Model.Event?.Title</h4>
-                    <h4>Event Date: @Model.Event?.Date.ToString("yyyy-MM-dd"), @Model.Event?.Time</h4>
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="btn btn-primary">RSVP Statues</a>
-                </div>
+<div class="row align-items-center" style="height:60vh">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Invitation Details</h3>
+            </div>
+            <div class="card-body">
+                <h4>Guest Email: @Model.GuestEmail</h4>
+                <h4>Ivnitation Status: @Model.Status</h4>
+                @if (Model.Status == InvitationStatus.Accepted)
+                {
+                    <h4>Response Date: @Model.ResponseDate?.ToString("yyyy-MM-dd")</h4>
+                }
+                <h4>Event: @Model.Event?.Title</h4>
+                <h4>Event Date: @Model.Event?.Date.ToString("yyyy-MM-dd"), @Model.Event?.Time</h4>
+            </div>
+            <div class="card-footer">
+                <a href="#" class="btn btn-primary">RSVP Statues</a>
             </div>
         </div>
     </div>
-
 </div>

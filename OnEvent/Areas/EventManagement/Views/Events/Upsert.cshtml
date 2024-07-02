@@ -4,116 +4,124 @@
     ViewBag.Title = Model.Id == Guid.Empty ? "Create Event" : "Edit Event";
 }
 
-<div class="container">
-    <h1>  @(Model.Id == Guid.Empty ? "Create" : "Edit") Event</h1>
+<h1>  @(Model.Id == Guid.Empty ? "Create" : "Edit") Event</h1>
 
-    <form asp-action="@(Model.Id == Guid.Empty ? "Create" : "Edit")"
-          asp-route-id="@(Model.Id == Guid.Empty ? "" : Model.Id)"
-          method="post"
-          enctype="multipart/form-data">
-        @Html.AntiForgeryToken()
-        @* Title *@
-        <div class="form-floating mb-3">
-            <input asp-for="Title" class="form-control" placeholder=""/>
-            <label asp-for="Title"></label>
-            <span asp-validation-for="Title" class="text-danger"></span>
-        </div>
-        @* Brief *@
-        <div class="form-floating mb-3">
-            <textarea asp-for="Brief" class="form-control" rows="10" placeholder=""></textarea>
-            <label asp-for="Brief"></label>
-            <span asp-validation-for="Brief" class="text-danger"></span>
-        </div>
-        @* Agenda *@
-        <div class="form-floating mb-3">
-            <textarea asp-for="Agenda" class="form-control" rows="15" placeholder=""></textarea>
-            <label asp-for="Agenda"></label>
-            <span asp-validation-for="Agenda" class="text-danger"></span>
-        </div>
-        @* Description *@
-        <div class="form-floating mb-3">
-            <textarea asp-for="Description" class="form-control" rows="20" placeholder=""></textarea>
-            <label asp-for="Description"></label>
-            <span asp-validation-for="Description" class="text-danger"></span>
-        </div>
-        @* Date *@
+<form asp-action="@(Model.Id == Guid.Empty ? "Create" : "Edit")"
+      asp-route-id="@(Model.Id == Guid.Empty ? "" : Model.Id)"
+      method="post"
+      enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    @* Title *@
+    <div class="form-floating mb-3">
+        <input asp-for="Title" class="form-control" placeholder="" />
+        <label asp-for="Title"></label>
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    @* Category *@
+    <div class="form-group mb-3">
+        <label asp-for="Category" class="control-label"></label>
+        <select asp-for="Category" asp-items="Html.GetEnumSelectList<CategoryOptions>()" class="form-select">
+        </select>
+        <span asp-validation-for="Category" class="text-danger"></span>
+    </div>
+    @* Brief *@
+    <div class="form-floating mb-3">
+        <textarea asp-for="Brief" class="form-control" rows="10" placeholder=""></textarea>
+        <label asp-for="Brief"></label>
+        <span asp-validation-for="Brief" class="text-danger"></span>
+    </div>
+    @* Agenda *@
+    <div class="form-floating mb-3">
+        <textarea asp-for="Agenda" class="form-control" rows="15" placeholder=""></textarea>
+        <label asp-for="Agenda"></label>
+        <span asp-validation-for="Agenda" class="text-danger"></span>
+    </div>
+    @* Description *@
+    <div class="form-floating mb-3">
+        <textarea asp-for="Description" class="form-control" rows="20" placeholder=""></textarea>
+        <label asp-for="Description"></label>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    @* Date *@
+    <div class="form-group mb-3">
+        <label asp-for="Date" class="control-label"></label>
+        <input asp-for="Date" class="form-control" type="date" placeholder="" />
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+    @* Time *@
+    <div class="form-group mb-3">
+        <label asp-for="Time" class="control-label"></label>
+        <input asp-for="Time" class="form-control" type="time" placeholder="" />
+        <span asp-validation-for="Time" class="text-danger"></span>
+    </div>
+    @* Location *@
+    <div class="form-floating mb-3">
+        <input asp-for="Location" class="form-control" placeholder="" />
+        <label asp-for="Location"></label>
+        <span asp-validation-for="Location" class="text-danger"></span>
+    </div>
+    @* LocationType *@
+    <div class="form-group mb-3">
+        <label asp-for="LocationType" class="control-label"></label>
+        <select asp-for="LocationType" asp-items="Html.GetEnumSelectList<LocationType>()" class="form-select">
+        </select>
+        <span asp-validation-for="LocationType" class="text-danger"></span>
+    </div>
+    @* Logistics *@
+    <div>
+        @* EquipmentNeeded *@
         <div class="form-group mb-3">
-            <label asp-for="Date" class="control-label"></label>
-            <input asp-for="Date" class="form-control" type="date" placeholder="" />
-            <span asp-validation-for="Date" class="text-danger"></span>
-        </div>
-        @* Time *@
-        <div class="form-group mb-3">
-            <label asp-for="Time" class="control-label"></label>
-            <input asp-for="Time" class="form-control" type="time" placeholder="" />
-            <span asp-validation-for="Time" class="text-danger"></span>
-        </div>
-        @* Location *@
-        <div class="form-floating mb-3">
-            <input asp-for="Location" class="form-control" placeholder="" />
-            <label asp-for="Location"></label>
-            <span asp-validation-for="Location" class="text-danger"></span>
-        </div>
-        @* LocationType *@
-        <div class="form-group mb-3">
-            <label asp-for="LocationType" class="control-label"></label>
-            <select asp-for="LocationType" asp-items="Html.GetEnumSelectList<LocationType>()" class="form-select">
+            <label asp-for="Logistics.EquipmentNeeded" class="control-label"></label>
+            <select asp-for="Logistics.EquipmentNeeded"
+                    asp-items="Html.GetEnumSelectList<EquipmentOption>()"
+                    class="form-select"
+                    multiple>
             </select>
-            <span asp-validation-for="LocationType" class="text-danger"></span>
-        </div>
-        @* Logistics *@
-        <div>
-            @* EquipmentNeeded *@
-            <div class="form-group mb-3">
-                <label asp-for="Logistics.EquipmentNeeded" class="control-label"></label>
-                <select asp-for="Logistics.EquipmentNeeded"
-                        asp-items="Html.GetEnumSelectList<EquipmentOption>()" 
-                        class="form-select"
-                        multiple>
-                </select>
             <span asp-validation-for="Logistics.EquipmentNeeded" class="text-danger"></span>
-            </div>
-            @* CateringDetails *@
-             <div class="form-group mb-3">
-                <label asp-for="Logistics.CateringDetails" class="control-label"></label>
-                <select asp-for="Logistics.CateringDetails"
-                        asp-items="Html.GetEnumSelectList<MenuOption>()"
-                        class="form-select"
-                        multiple>
-                </select>
-                <span asp-validation-for="Logistics.CateringDetails" class="text-danger"></span>
-            </div>
-            @* TransportationArrangements *@
-                <div class="form-group mb-3">
-                    <label asp-for="Logistics.TransportationArrangements" class="control-label"></label>
-                    <select asp-for="Logistics.TransportationArrangements"
-                            asp-items="Html.GetEnumSelectList<Transportation>()"
-                        class="form-select"
-                            multiple>
-                    </select>
-                    <span asp-validation-for="Logistics.TransportationArrangements" class="text-danger"></span>
-                </div>
         </div>
-        @* ImageFile *@
+        @* CateringDetails *@
         <div class="form-group mb-3">
-            <label asp-for="ImageFile" class="control-label"></label>
-            <input asp-for="ImageFile" class="form-control" accept="image/*" />
-            <span asp-validation-for="ImageFile" class="text-danger"></span>
+            <label asp-for="Logistics.CateringDetails" class="control-label"></label>
+            <select asp-for="Logistics.CateringDetails"
+                    asp-items="Html.GetEnumSelectList<MenuOption>()"
+                    class="form-select"
+                    multiple>
+            </select>
+            <span asp-validation-for="Logistics.CateringDetails" class="text-danger"></span>
         </div>
-
-        <div class="d-flex justify-content-evenly">
-                <div>
-                    <a asp-action="Index" class="btn btn-danger">Back to List</a>
-                </div>
-                <div class="form-group">
-                <input type="submit" value="@(Model.Id == Guid.Empty ? "Create" : "Edit")" class="btn btn-primary" />
-                </div>
+        @* TransportationArrangements *@
+        <div class="form-group mb-3">
+            <label asp-for="Logistics.TransportationArrangements" class="control-label"></label>
+            <select asp-for="Logistics.TransportationArrangements"
+                    asp-items="Html.GetEnumSelectList<Transportation>()"
+                    class="form-select"
+                    multiple>
+            </select>
+            <span asp-validation-for="Logistics.TransportationArrangements" class="text-danger"></span>
         </div>
-    </form>
+    </div>
+    @* ImageFile *@
+    <div class="form-group mb-3">
+        <label asp-for="ImageFile" class="control-label"></label>
+        <input asp-for="ImageFile" class="form-control" accept="image/*" />
+        <span asp-validation-for="ImageFile" class="text-danger"></span>
+    </div>
 
-</div>
+    <div class="d-flex justify-content-evenly">
+        <div>
+            <a asp-action="Index" class="btn btn-danger">Back to List</a>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="@(Model.Id == Guid.Empty ? "Create" : "Edit")" class="btn btn-primary" />
+        </div>
+    </div>
+</form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    @{await Html.RenderPartialAsync("_ValidateImageLength");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    @{
+        await Html.RenderPartialAsync("_ValidateImageLength");
+    }
 }

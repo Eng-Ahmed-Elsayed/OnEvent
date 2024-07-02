@@ -23,7 +23,8 @@ namespace Models.DataTransferObjects
         [Required]
         [StringLength(800, MinimumLength = 5)]
         public string Description { get; set; }
-
+        [Required]
+        public CategoryOptions Category { get; set; } = CategoryOptions.General;
         [Required]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
